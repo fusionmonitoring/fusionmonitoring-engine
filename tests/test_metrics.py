@@ -1,23 +1,45 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2015-2018: Alignak team, see AUTHORS.txt file for contributors
+# Copyright (C) 2019-2019: FusionSupervision team, see AUTHORS.md file for contributors
 #
-# This file is part of Alignak.
+# This file is part of FusionSupervision engine.
 #
-# Alignak is free software: you can redistribute it and/or modify
+# FusionSupervision is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# Alignak is distributed in the hope that it will be useful,
+# FusionSupervision is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU Affero General Public License for more details.
 #
 # You should have received a copy of the GNU Affero General Public License
-# along with Alignak.  If not, see <http://www.gnu.org/licenses/>.
+# along with FusionSupervision engine.  If not, see <http://www.gnu.org/licenses/>.
 #
+#
+# This file incorporates work covered by the following copyright and
+# permission notice:
+#
+#  Copyright (C) 2015-2018: Alignak team, see AUTHORS.alignak.txt file for contributors
+#
+#  This file is part of Alignak.
+#
+#  Alignak is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU Affero General Public License as published by
+#  the Free Software Foundation, either version 3 of the License, or
+#  (at your option) any later version.
+#
+#  Alignak is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU Affero General Public License for more details.
+#
+#  You should have received a copy of the GNU Affero General Public License
+#  along with Alignak.  If not, see <http://www.gnu.org/licenses/>.
+#
+
 """
 This file contains the tests for the internal metrics module
 """
@@ -26,11 +48,11 @@ import re
 import pickle
 import threading
 import requests_mock
-from alignak.stats import *
-from alignak.modulesmanager import ModulesManager
-from alignak.brok import Brok
+from fusionsupervision.stats import *
+from fusionsupervision.modulesmanager import ModulesManager
+from fusionsupervision.brok import Brok
 
-from .alignak_test import AlignakTest
+from .fusionsupervision_test import FusionsupervisionTest
 
 
 class FakeCarbonServer(threading.Thread):
@@ -117,7 +139,7 @@ class FakeCarbonServer(threading.Thread):
 #         sock.close()
 #
 #
-class TestMetricsSetup(AlignakTest):
+class TestMetricsSetup(FusionsupervisionTest):
     """
     This class tests the inner metrics module set-up
     """
@@ -128,8 +150,8 @@ class TestMetricsSetup(AlignakTest):
         self.set_unit_tests_logger_level()
         self.clear_logs()
 
-        if os.path.exists('/tmp/alignak-metrics.log'):
-            os.remove('/tmp/alignak-metrics.log')
+        if os.path.exists('/tmp/fusionsupervision-metrics.log'):
+            os.remove('/tmp/fusionsupervision-metrics.log')
 
         # Create a fake server
         self.fake_carbon = FakeCarbonServer(port=2004)
@@ -137,8 +159,8 @@ class TestMetricsSetup(AlignakTest):
         # # Create a fake server
         # self.fake_carbon = FakeInfluxDBServer(port=8086)
         #
-        if os.path.exists('/tmp/alignak-metrics.log'):
-            os.remove('/tmp/alignak-metrics.log')
+        if os.path.exists('/tmp/fusionsupervision-metrics.log'):
+            os.remove('/tmp/fusionsupervision-metrics.log')
 
     def tearDown(self):
         super(TestMetricsSetup, self).tearDown()
@@ -197,7 +219,7 @@ class TestMetricsSetup(AlignakTest):
                            "statement_id":0, "version":"1.7.2"
                        }]
                    }, status_code=204, headers={"x-influxdb-version": "1.7.2"})
-            mr.get("http://localhost:8086/query?q=SHOW+DATABASES&db=alignak",
+            mr.get("http://localhost:8086/query?q=SHOW+DATABASES&db=fusionsupervision",
                    json={
                        "results":[{
                            "statement_id":0, "series":[
@@ -205,16 +227,16 @@ class TestMetricsSetup(AlignakTest):
                             ]
                        }]
                    })
-            mr.get("http://localhost:8086/query?q=SHOW+DATABASES&db=alignak",
+            mr.get("http://localhost:8086/query?q=SHOW+DATABASES&db=fusionsupervision",
                    json={"results": [{"statement_id": 0}]})
-            mr.post("http://localhost:8086/query?q=CREATE+DATABASE+%22alignak%22&db=alignak",
+            mr.post("http://localhost:8086/query?q=CREATE+DATABASE+%22fusionsupervision%22&db=fusionsupervision",
                    json={"results":[{ "statement_id":0 }]})
-            mr.post("http://localhost:8086/query?q=CREATE+RETENTION+POLICY+%22alignak%22+ON+%22alignak%22+DURATION+1y+REPLICATION+1+SHARD+DURATION+0s&db=alignak",
+            mr.post("http://localhost:8086/query?q=CREATE+RETENTION+POLICY+%22fusionsupervision%22+ON+%22fusionsupervision%22+DURATION+1y+REPLICATION+1+SHARD+DURATION+0s&db=fusionsupervision",
                    json={"results":[{ "statement_id":0 }]})
-            mr.post("http://localhost:8086/write?db=alignak", status_code=204,
+            mr.post("http://localhost:8086/write?db=fusionsupervision", status_code=204,
                     json={"results":[{ "statement_id":0 }]})
 
-            self.setup_with_file('cfg/cfg_metrics.cfg', 'cfg/inner_metrics/alignak.ini')
+            self.setup_with_file('cfg/cfg_metrics.cfg', 'cfg/inner_metrics/fusionsupervision.ini')
 
             # Specific configuration enables the module
             assert self._scheduler.pushed_conf.process_performance_data is True
@@ -228,7 +250,7 @@ class TestMetricsSetup(AlignakTest):
             my_module = self._broker_daemon.modules[0]
             print(my_module)
             # Generic stuff
-            assert my_module.python_name == 'alignak.modules.inner_metrics'
+            assert my_module.python_name == 'fusionsupervision.modules.inner_metrics'
             assert my_module.type == 'metrics'
             # assert my_module.alias == 'inner-metrics'
             assert my_module.enabled is True
@@ -237,7 +259,7 @@ class TestMetricsSetup(AlignakTest):
             # When the module is configured in Alignak configuration, it does not exist!
             # assert my_module.host_perfdata_file == 'go-hosts'
             # assert my_module.service_perfdata_file == 'go-services'
-            assert my_module.output_file == '/tmp/alignak-metrics.log'
+            assert my_module.output_file == '/tmp/fusionsupervision-metrics.log'
 
             self.clear_logs()
 
@@ -254,11 +276,11 @@ class TestMetricsSetup(AlignakTest):
 
             # self.assert_log_match(
             #     "Targets configuration: graphite: True, influxdb: True, "
-            #     "file: /tmp/alignak-metrics.log", 10)
+            #     "file: /tmp/fusionsupervision-metrics.log", 10)
             #
             self.assert_log_match(
                 "targets configuration: graphite: True, influxdb: True, "
-                "file: /tmp/alignak-metrics.log", 11)
+                "file: /tmp/fusionsupervision-metrics.log", 11)
 
             self.assert_log_match(
                 "Storing metrics in an output file is configured. Do not forget "
@@ -266,7 +288,7 @@ class TestMetricsSetup(AlignakTest):
 
             self.assert_log_match("Trying to initialize module: inner-metrics", 24)
 
-            self.assert_log_match("testing storage to /tmp/alignak-metrics.log ...", 25)
+            self.assert_log_match("testing storage to /tmp/fusionsupervision-metrics.log ...", 25)
             self.assert_log_match("Ok", 26)
 
             self.assert_log_match("testing connection to InfluxDB localhost:8086 ...", 27)
@@ -274,8 +296,8 @@ class TestMetricsSetup(AlignakTest):
             self.assert_log_match("testing connection to Graphite localhost:2004 ...", 29)
             self.assert_log_match("Ok", 30)
 
-            self.assert_log_match("creating database alignak...", 31)
-            # self.assert_log_match("creating database retention policy: alignak - 1y - 1...", 32)
+            self.assert_log_match("creating database fusionsupervision...", 31)
+            # self.assert_log_match("creating database retention policy: fusionsupervision - 1y - 1...", 32)
             # self.assert_log_match("Ok", 33)
 
             self.assert_log_match("Module inner-metrics is initialized.", 32)
@@ -289,8 +311,8 @@ class TestMetricsSetup(AlignakTest):
             assert my_module.services_cache == {}
 
             # File output - we still got a metric for the connection test!
-            assert os.path.exists('/tmp/alignak-metrics.log')
-            with open('/tmp/alignak-metrics.log') as f:
+            assert os.path.exists('/tmp/fusionsupervision-metrics.log')
+            with open('/tmp/fusionsupervision-metrics.log') as f:
                 lines = f.readlines()
                 first_line = False
                 for line in lines:
@@ -507,7 +529,7 @@ class TestMetricsSetup(AlignakTest):
             self.assert_log_match("Data: ", 5)
             self.assert_log_match("Flushing 1 metrics to Graphite/carbon", 6)
             self.assert_log_match("Flushing 1 metrics to InfluxDB", 7)
-            self.assert_log_match("Storing 1 metrics to /tmp/alignak-metrics.log", 8)
+            self.assert_log_match("Storing 1 metrics to /tmp/fusionsupervision-metrics.log", 8)
 
             # Service check result
             self.clear_logs()
@@ -569,13 +591,13 @@ class TestMetricsSetup(AlignakTest):
             self.assert_log_match("Data: ", 6)
             self.assert_log_match("Flushing 1 metrics to Graphite/carbon", 7)
             self.assert_log_match("Flushing 1 metrics to InfluxDB", 8)
-            self.assert_log_match("Storing 1 metrics to /tmp/alignak-metrics.log", 9)
+            self.assert_log_match("Storing 1 metrics to /tmp/fusionsupervision-metrics.log", 9)
 
             # Metrics count
 
             # File output
-            assert os.path.exists('/tmp/alignak-metrics.log')
-            with open('/tmp/alignak-metrics.log') as f:
+            assert os.path.exists('/tmp/fusionsupervision-metrics.log')
+            with open('/tmp/fusionsupervision-metrics.log') as f:
                 lines = f.readlines()
                 first_line = False
                 for line in lines:
@@ -591,7 +613,7 @@ class TestMetricsSetup(AlignakTest):
                 assert 33 == len(lines)
 
 
-class TestMetricsRun(AlignakTest):
+class TestMetricsRun(FusionsupervisionTest):
     """
     This class tests the inner metrics module running
     """

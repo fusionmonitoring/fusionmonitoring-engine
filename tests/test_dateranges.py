@@ -1,22 +1,43 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2015-2018: Alignak team, see AUTHORS.txt file for contributors
+# Copyright (C) 2019-2019: FusionSupervision team, see AUTHORS.md file for contributors
 #
-# This file is part of Alignak.
+# This file is part of FusionSupervision engine.
 #
-# Alignak is free software: you can redistribute it and/or modify
+# FusionSupervision is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# Alignak is distributed in the hope that it will be useful,
+# FusionSupervision is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU Affero General Public License for more details.
 #
 # You should have received a copy of the GNU Affero General Public License
-# along with Alignak.  If not, see <http://www.gnu.org/licenses/>.
+# along with FusionSupervision engine.  If not, see <http://www.gnu.org/licenses/>.
+#
+#
+# This file incorporates work covered by the following copyright and
+# permission notice:
+#
+#  Copyright (C) 2015-2018: Alignak team, see AUTHORS.alignak.txt file for contributors
+#
+#  This file is part of Alignak.
+#
+#  Alignak is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU Affero General Public License as published by
+#  the Free Software Foundation, either version 3 of the License, or
+#  (at your option) any later version.
+#
+#  Alignak is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU Affero General Public License for more details.
+#
+#  You should have received a copy of the GNU Affero General Public License
+#  along with Alignak.  If not, see <http://www.gnu.org/licenses/>.
 
 """
 This file is used to test the date ranges management
@@ -30,15 +51,15 @@ import time
 import datetime
 import pytest
 from freezegun import freeze_time
-from .alignak_test import AlignakTest
-from alignak.objects.timeperiod import Timeperiod
-from alignak.daterange import CalendarDaterange, StandardDaterange, MonthWeekDayDaterange, \
+from .fusionsupervision_test import FusionsupervisionTest
+from fusionsupervision.objects.timeperiod import Timeperiod
+from fusionsupervision.daterange import CalendarDaterange, StandardDaterange, MonthWeekDayDaterange, \
     MonthDateDaterange, WeekDayDaterange, MonthDayDaterange, find_day_by_weekday_offset, \
     find_day_by_offset
-import alignak.util
+import fusionsupervision.util
 
 
-class TestDateRanges(AlignakTest):
+class TestDateRanges(FusionsupervisionTest):
     """
     This class test dataranges
     """
@@ -52,7 +73,7 @@ class TestDateRanges(AlignakTest):
         """
         now = time.localtime()
         start = time.mktime((2015, 7, 26, 0, 0, 0, 0, 0, now.tm_isdst))
-        timestamp = alignak.daterange.get_start_of_day(2015, 7, 26)
+        timestamp = fusionsupervision.daterange.get_start_of_day(2015, 7, 26)
         # time.timezone is the offset related of the current timezone of the system
         print("Start: %s, timestamp: %s" % (start, timestamp))
         if start != timestamp:
@@ -71,7 +92,7 @@ class TestDateRanges(AlignakTest):
         start = time.mktime((now.tm_year, now.tm_mon, now.tm_mday, 0, 0, 0, 0, 0, -1))
         print("Start: %s" % start)
         # Alignak returns the start of day ts in local time
-        timestamp = alignak.daterange.get_start_of_day(now.tm_year, now.tm_mon, now.tm_mday)
+        timestamp = fusionsupervision.daterange.get_start_of_day(now.tm_year, now.tm_mon, now.tm_mday)
         print("Timestamp: %s" % timestamp)
         # time.timezone is the offset related of the current timezone of the system
         if start != timestamp:
@@ -84,7 +105,7 @@ class TestDateRanges(AlignakTest):
         """
         now = time.localtime()
         start = time.mktime((2016, 8, 20, 23, 59, 59, 0, 0, now.tm_isdst))
-        timestamp = alignak.daterange.get_end_of_day(2016, 8, 20)
+        timestamp = fusionsupervision.daterange.get_end_of_day(2016, 8, 20)
         print("Start: %s, timestamp: %s" % (start, timestamp))
         # time.timezone is the offset related of the current timezone of the system
         if start != timestamp:

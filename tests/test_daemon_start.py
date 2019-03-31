@@ -1,49 +1,70 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2015-2018: Alignak team, see AUTHORS.txt file for contributors
+# Copyright (C) 2019-2019: FusionSupervision team, see AUTHORS.md file for contributors
 #
-# This file is part of Alignak.
+# This file is part of FusionSupervision engine.
 #
-# Alignak is free software: you can redistribute it and/or modify
+# FusionSupervision is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# Alignak is distributed in the hope that it will be useful,
+# FusionSupervision is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU Affero General Public License for more details.
 #
 # You should have received a copy of the GNU Affero General Public License
-# along with Alignak.  If not, see <http://www.gnu.org/licenses/>.
+# along with FusionSupervision engine.  If not, see <http://www.gnu.org/licenses/>.
 #
 #
 # This file incorporates work covered by the following copyright and
 # permission notice:
 #
-#  Copyright (C) 2009-2014:
-#     xkilian, fmikus@acktomic.com
-#     Hartmut Goebel, h.goebel@goebel-consult.de
-#     Grégory Starck, g.starck@gmail.com
-#     Sebastien Coavoux, s.coavoux@free.fr
-#     Jean Gabes, naparuba@gmail.com
-#     Gerhard Lausser, gerhard.lausser@consol.de
-
-#  This file is part of Shinken.
+#  Copyright (C) 2015-2018: Alignak team, see AUTHORS.alignak.txt file for contributors
 #
-#  Shinken is free software: you can redistribute it and/or modify
+#  This file is part of Alignak.
+#
+#  Alignak is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU Affero General Public License as published by
 #  the Free Software Foundation, either version 3 of the License, or
 #  (at your option) any later version.
 #
-#  Shinken is distributed in the hope that it will be useful,
+#  Alignak is distributed in the hope that it will be useful,
 #  but WITHOUT ANY WARRANTY; without even the implied warranty of
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #  GNU Affero General Public License for more details.
 #
 #  You should have received a copy of the GNU Affero General Public License
-#  along with Shinken.  If not, see <http://www.gnu.org/licenses/>.
+#  along with Alignak.  If not, see <http://www.gnu.org/licenses/>.
+#
+#
+#  This file incorporates work covered by the following copyright and
+#  permission notice:
+#
+#   Copyright (C) 2009-2014:
+#      xkilian, fmikus@acktomic.com
+#      Hartmut Goebel, h.goebel@goebel-consult.de
+#      Grégory Starck, g.starck@gmail.com
+#      Sebastien Coavoux, s.coavoux@free.fr
+#      Jean Gabes, naparuba@gmail.com
+#      Gerhard Lausser, gerhard.lausser@consol.de
+#
+#   This file is part of Shinken.
+#
+#   Shinken is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU Affero General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   Shinken is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU Affero General Public License for more details.
+#
+#   You should have received a copy of the GNU Affero General Public License
+#   along with Shinken.  If not, see <http://www.gnu.org/licenses/>.
 
 #
 # This file is used to test the Alignak daemons start
@@ -61,15 +82,15 @@ import logging
 
 import psutil
 
-from .alignak_test import AlignakTest
+from .fusionsupervision_test import FusionsupervisionTest
 
-from alignak.version import VERSION
-from alignak.daemons.pollerdaemon import Poller
-from alignak.daemons.brokerdaemon import Broker
-from alignak.daemons.schedulerdaemon import Alignak
-from alignak.daemons.reactionnerdaemon import Reactionner
-from alignak.daemons.receiverdaemon import Receiver
-from alignak.daemons.arbiterdaemon import Arbiter
+from fusionsupervision.version import VERSION
+from fusionsupervision.daemons.pollerdaemon import Poller
+from fusionsupervision.daemons.brokerdaemon import Broker
+from fusionsupervision.daemons.schedulerdaemon import Alignak
+from fusionsupervision.daemons.reactionnerdaemon import Reactionner
+from fusionsupervision.daemons.receiverdaemon import Receiver
+from fusionsupervision.daemons.arbiterdaemon import Arbiter
 import pytest
 
 try:
@@ -93,9 +114,9 @@ except ImportError as exp:  # Like in nt system
         return os.getlogin()
 
 
-alignak_root = os.path.abspath("cfg/daemons")
-alignak_config = os.path.abspath("cfg/daemons/alignak.cfg")
-alignak_environment = os.path.abspath("cfg/daemons/alignak.ini")
+fusionsupervision_root = os.path.abspath("cfg/daemons")
+fusionsupervision_config = os.path.abspath("cfg/daemons/fusionsupervision.cfg")
+fusionsupervision_environment = os.path.abspath("cfg/daemons/fusionsupervision.ini")
 
 #############################################################################
 
@@ -134,11 +155,11 @@ class template_Daemon_Start():
         # This to allow using a reference configuration if needed,
         # and to make some tests easier to set-up
         print("Preparing default configuration...")
-        # if os.path.exists('/tmp/etc/alignak'):
-        #     shutil.rmtree('/tmp/etc/alignak')
+        # if os.path.exists('/tmp/etc/fusionsupervision'):
+        #     shutil.rmtree('/tmp/etc/fusionsupervision')
 
-        # shutil.copytree('../etc', '/tmp/etc/alignak')
-        # files = ['/tmp/etc/alignak/alignak.ini']
+        # shutil.copytree('../etc', '/tmp/etc/fusionsupervision')
+        # files = ['/tmp/etc/fusionsupervision/fusionsupervision.ini']
         # replacements = {
         #     '_dist=/usr/local/': '_dist=/tmp',
         #     ';is_daemon=0': 'is_daemon=0'
@@ -147,10 +168,10 @@ class template_Daemon_Start():
         # print("Prepared")
 
         print("Env: %s, daemon: %s, daemonize: %s, replace: %s, debug: %s"
-              % (alignak_environment, self.daemon_name, is_daemon, do_replace, debug_file))
+              % (fusionsupervision_environment, self.daemon_name, is_daemon, do_replace, debug_file))
         args = {
-            'env_file': alignak_environment,
-            'alignak_name': 'my-alignak', 'daemon_name': self.daemon_name,
+            'env_file': fusionsupervision_environment,
+            'fusionsupervision_name': 'my-fusionsupervision', 'daemon_name': self.daemon_name,
             'is_daemon': is_daemon, 'do_replace': do_replace,
             'config_file': None, 'debug': debug_file is not None, 'debug_file': debug_file,
         }
@@ -218,7 +239,7 @@ class template_Daemon_Start():
             assert daemon.debug is True
         else:
             assert daemon.debug_file == None
-        assert daemon.pid_filename == os.path.abspath('/tmp/var/run/alignak/%s.pid' % daemon.name)
+        assert daemon.pid_filename == os.path.abspath('/tmp/var/run/fusionsupervision/%s.pid' % daemon.name)
         save_pid_fname = daemon.pid_filename
         # assert daemon.log_filename == os.path.abspath('./cfg/daemons/log/%s.log' % daemon.name)
         assert daemon.log_filename == ''    # Because logs are defined in the logger configuration
@@ -271,7 +292,7 @@ class template_Daemon_Start():
         # # Start normally
         daemon = self.get_daemon(is_daemon=False, do_replace=False, free_port=False)
         assert daemon.debug_file == None
-        assert daemon.pid_filename == os.path.abspath('/tmp/var/run/alignak/%s.pid' % daemon.name)
+        assert daemon.pid_filename == os.path.abspath('/tmp/var/run/fusionsupervision/%s.pid' % daemon.name)
         # assert daemon.log_filename == os.path.abspath('./cfg/daemons/log/%s.log' % daemon.name)
         assert daemon.log_filename == ''    # Because logs are defined in the logger configuration
 
@@ -286,7 +307,7 @@ class template_Daemon_Start():
         # Get daemon statistics
         stats = daemon.get_daemon_stats()
         print("Daemon: %s" % daemon.__dict__)
-        assert 'alignak' in stats
+        assert 'fusionsupervision' in stats
         assert 'version' in stats
         assert 'name' in stats
         assert 'type' in stats
@@ -310,14 +331,14 @@ class template_Daemon_Start():
         print("Daemon's log: %s" % daemon.log_filename)
 
         # Do not reload the configuration file (avoid replacing modified properties for the test...)
-        daemon.setup_alignak_logger()
+        daemon.setup_fusionsupervision_logger()
 
         # Reset initial working dir
         os.chdir(self._launch_dir)
 
         # Start as a daemon and replace if still exists
         daemon = self.get_daemon(is_daemon=False, do_replace=True, free_port=False)
-        assert daemon.pid_filename == os.path.abspath('/tmp/var/run/alignak/%s.pid' % daemon.name)
+        assert daemon.pid_filename == os.path.abspath('/tmp/var/run/fusionsupervision/%s.pid' % daemon.name)
         # assert daemon.log_filename == os.path.abspath('./cfg/daemons/log/%s.log' % daemon.name)
         assert daemon.log_filename == ''    # Because logs are defined in the logger configuration
 
@@ -380,7 +401,7 @@ class template_Daemon_Start():
         assert daemon.log_filename == ''    # Because logs are defined in the logger configuration
 
         # Do not reload the configuration file (avoid replacing modified properties for the test...)
-        daemon.setup_alignak_logger()
+        daemon.setup_fusionsupervision_logger()
         daemon.debug = True
 
         self.show_logs()
@@ -411,11 +432,11 @@ class template_Daemon_Start():
 
         :return:
         """
-        os.environ['ALIGNAK_USER'] = 'alignak'
-        os.environ['ALIGNAK_GROUP'] = 'alignak'
+        os.environ['ALIGNAK_USER'] = 'fusionsupervision'
+        os.environ['ALIGNAK_GROUP'] = 'fusionsupervision'
         daemon = self.get_daemon()
-        assert daemon.user == 'alignak'
-        assert daemon.group == 'alignak'
+        assert daemon.user == 'fusionsupervision'
+        assert daemon.group == 'fusionsupervision'
         del os.environ['ALIGNAK_USER']
         del os.environ['ALIGNAK_GROUP']
 
@@ -502,7 +523,7 @@ class template_Daemon_Start():
         # stats = d1.get_daemon_stats()
         # print("Daemon stats: %s" % stats)
         # These properties are only provided by the Web interface
-        # assert 'alignak' in stats
+        # assert 'fusionsupervision' in stats
         # assert 'version' in stats
         # assert 'name' in stats
         # assert 'type' in stats
@@ -523,7 +544,7 @@ class template_Daemon_Start():
 
 #############################################################################
 
-class Test_Broker_Start(template_Daemon_Start, AlignakTest):
+class Test_Broker_Start(template_Daemon_Start, FusionsupervisionTest):
     def setUp(self):
         super(Test_Broker_Start, self).setUp()
 
@@ -531,7 +552,7 @@ class Test_Broker_Start(template_Daemon_Start, AlignakTest):
     daemon_name = 'my_broker'
 
 
-class Test_Scheduler_Start(template_Daemon_Start, AlignakTest):
+class Test_Scheduler_Start(template_Daemon_Start, FusionsupervisionTest):
     def setUp(self):
         super(Test_Scheduler_Start, self).setUp()
 
@@ -539,7 +560,7 @@ class Test_Scheduler_Start(template_Daemon_Start, AlignakTest):
     daemon_name = 'my_scheduler'
 
 
-class Test_Poller_Start(template_Daemon_Start, AlignakTest):
+class Test_Poller_Start(template_Daemon_Start, FusionsupervisionTest):
     def setUp(self):
         super(Test_Poller_Start, self).setUp()
 
@@ -547,7 +568,7 @@ class Test_Poller_Start(template_Daemon_Start, AlignakTest):
     daemon_name = 'my_poller'
 
 
-class Test_Reactionner_Start(template_Daemon_Start, AlignakTest):
+class Test_Reactionner_Start(template_Daemon_Start, FusionsupervisionTest):
     def setUp(self):
         super(Test_Reactionner_Start, self).setUp()
 
@@ -555,7 +576,7 @@ class Test_Reactionner_Start(template_Daemon_Start, AlignakTest):
     daemon_name = 'my_reactionner'
 
 
-class Test_Receiver_Start(template_Daemon_Start, AlignakTest):
+class Test_Receiver_Start(template_Daemon_Start, FusionsupervisionTest):
     def setUp(self):
         super(Test_Receiver_Start, self).setUp()
 
@@ -563,7 +584,7 @@ class Test_Receiver_Start(template_Daemon_Start, AlignakTest):
     daemon_name = 'my_receiver'
 
 
-class Test_Arbiter_Start(template_Daemon_Start, AlignakTest):
+class Test_Arbiter_Start(template_Daemon_Start, FusionsupervisionTest):
     def setUp(self):
         super(Test_Arbiter_Start, self).setUp()
 

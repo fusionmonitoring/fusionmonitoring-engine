@@ -1,67 +1,88 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2015-2018: Alignak team, see AUTHORS.txt file for contributors
+# Copyright (C) 2019-2019: FusionSupervision team, see AUTHORS.md file for contributors
 #
-# This file is part of Alignak.
+# This file is part of FusionSupervision engine.
 #
-# Alignak is free software: you can redistribute it and/or modify
+# FusionSupervision is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# Alignak is distributed in the hope that it will be useful,
+# FusionSupervision is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU Affero General Public License for more details.
 #
 # You should have received a copy of the GNU Affero General Public License
-# along with Alignak.  If not, see <http://www.gnu.org/licenses/>.
+# along with FusionSupervision engine.  If not, see <http://www.gnu.org/licenses/>.
 #
 #
 # This file incorporates work covered by the following copyright and
 # permission notice:
 #
-#  Copyright (C) 2009-2014:
-#     Hartmut Goebel, h.goebel@goebel-consult.de
-#     aviau, alexandre.viau@savoirfairelinux.com
-#     xkilian, fmikus@acktomic.com
-#     Grégory Starck, g.starck@gmail.com
-#     Sebastien Coavoux, s.coavoux@free.fr
-#     Jean Gabes, naparuba@gmail.com
-#     Gerhard Lausser, gerhard.lausser@consol.de
-
-#  This file is part of Shinken.
+#  Copyright (C) 2015-2018: Alignak team, see AUTHORS.alignak.txt file for contributors
 #
-#  Shinken is free software: you can redistribute it and/or modify
+#  This file is part of Alignak.
+#
+#  Alignak is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU Affero General Public License as published by
 #  the Free Software Foundation, either version 3 of the License, or
 #  (at your option) any later version.
 #
-#  Shinken is distributed in the hope that it will be useful,
+#  Alignak is distributed in the hope that it will be useful,
 #  but WITHOUT ANY WARRANTY; without even the implied warranty of
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #  GNU Affero General Public License for more details.
 #
 #  You should have received a copy of the GNU Affero General Public License
-#  along with Shinken.  If not, see <http://www.gnu.org/licenses/>.
+#  along with Alignak.  If not, see <http://www.gnu.org/licenses/>.
+#
+#
+#  This file incorporates work covered by the following copyright and
+#  permission notice:
+#
+#   Copyright (C) 2009-2014:
+#      Hartmut Goebel, h.goebel@goebel-consult.de
+#      aviau, alexandre.viau@savoirfairelinux.com
+#      xkilian, fmikus@acktomic.com
+#      Grégory Starck, g.starck@gmail.com
+#      Sebastien Coavoux, s.coavoux@free.fr
+#      Jean Gabes, naparuba@gmail.com
+#      Gerhard Lausser, gerhard.lausser@consol.de
+#
+#   This file is part of Shinken.
+#
+#   Shinken is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU Affero General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   Shinken is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU Affero General Public License for more details.
+#
+#   You should have received a copy of the GNU Affero General Public License
+#   along with Shinken.  If not, see <http://www.gnu.org/licenses/>.
 
 #
 # This file is used to test the poller/reactionner workers that goes to timeout
 #
 import time
 
-from .alignak_test import AlignakTest
+from .fusionsupervision_test import FusionsupervisionTest
 
-from alignak.action import Action, ACT_STATUS_TIMEOUT, ACT_STATUS_QUEUED
-from alignak.notification import Notification
-from alignak.message import Message
-from alignak.worker import Worker
+from fusionsupervision.action import Action, ACT_STATUS_TIMEOUT, ACT_STATUS_QUEUED
+from fusionsupervision.notification import Notification
+from fusionsupervision.message import Message
+from fusionsupervision.worker import Worker
 from multiprocessing import Queue
-from alignak.objects.contact import Contact
+from fusionsupervision.objects.contact import Contact
 
 
-class TestWorkerTimeout(AlignakTest):
+class TestWorkerTimeout(FusionsupervisionTest):
     def setUp(self):
         super(TestWorkerTimeout, self).setUp()
 
@@ -91,7 +112,7 @@ class TestWorkerTimeout(AlignakTest):
 
         # We prepare a notification in the to_queue
         contact = Contact()
-        contact.contact_name = "alignak"
+        contact.contact_name = "fusionsupervision"
 
         data = {
             'uuid': 1,
@@ -147,5 +168,5 @@ class TestWorkerTimeout(AlignakTest):
         # Fake the scheduler inner results queue ... only for the test!
         self._scheduler.manage_results(o)
         self.show_logs()
-        self.assert_any_log_match("Contact alignak service notification command "
+        self.assert_any_log_match("Contact fusionsupervision service notification command "
                                   "'libexec/sleep_command.sh 7 ' timed out after")

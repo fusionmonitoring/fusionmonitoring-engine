@@ -1,22 +1,43 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2015-2018: Alignak team, see AUTHORS.txt file for contributors
+# Copyright (C) 2019-2019: FusionSupervision team, see AUTHORS.md file for contributors
 #
-# This file is part of Alignak.
+# This file is part of FusionSupervision engine.
 #
-# Alignak is free software: you can redistribute it and/or modify
+# FusionSupervision is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# Alignak is distributed in the hope that it will be useful,
+# FusionSupervision is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU Affero General Public License for more details.
 #
 # You should have received a copy of the GNU Affero General Public License
-# along with Alignak.  If not, see <http://www.gnu.org/licenses/>.
+# along with FusionSupervision engine.  If not, see <http://www.gnu.org/licenses/>.
+#
+#
+# This file incorporates work covered by the following copyright and
+# permission notice:
+#
+#  Copyright (C) 2015-2018: Alignak team, see AUTHORS.alignak.txt file for contributors
+#
+#  This file is part of Alignak.
+#
+#  Alignak is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU Affero General Public License as published by
+#  the Free Software Foundation, either version 3 of the License, or
+#  (at your option) any later version.
+#
+#  Alignak is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU Affero General Public License for more details.
+#
+#  You should have received a copy of the GNU Affero General Public License
+#  along with Alignak.  If not, see <http://www.gnu.org/licenses/>.
 #
 #
 
@@ -26,12 +47,12 @@ This file test all cases of eventhandler
 
 import time
 
-from alignak.objects import Contact
-from alignak.objects import Contactgroup
-from .alignak_test import AlignakTest
+from fusionsupervision.objects import Contact
+from fusionsupervision.objects import Contactgroup
+from .fusionsupervision_test import FusionsupervisionTest
 
 
-class TestContactGroup(AlignakTest):
+class TestContactGroup(FusionsupervisionTest):
     """
     This class tests the contactgroups
     """
@@ -52,7 +73,7 @@ class TestContactGroup(AlignakTest):
         correctly
         :return: None
         """
-        self.setup_with_file('cfg/contactgroup/alignak_groups_with_no_alias.cfg')
+        self.setup_with_file('cfg/contactgroup/fusionsupervision_groups_with_no_alias.cfg')
         assert self.conf_is_correct
 
         #  Find a contactgroup named NOALIAS
@@ -66,7 +87,7 @@ class TestContactGroup(AlignakTest):
 
         :return: None
         """
-        self.setup_with_file('cfg/contactgroup/alignak_contactgroup_members.cfg')
+        self.setup_with_file('cfg/contactgroup/fusionsupervision_contactgroup_members.cfg')
         assert self.conf_is_correct
 
         #  Found a contactgroup named allhosts_and_groups
@@ -101,7 +122,7 @@ class TestContactGroup(AlignakTest):
         """ Test if group is linked from the member
         :return: None
         """
-        self.setup_with_file('cfg/contactgroup/alignak_contactgroup_members.cfg')
+        self.setup_with_file('cfg/contactgroup/fusionsupervision_contactgroup_members.cfg')
         assert self.conf_is_correct
 
         #  Found a contactgroup named allhosts_and_groups
@@ -142,7 +163,7 @@ class TestContactGroup(AlignakTest):
         """ Allow contactgroups with no hosts
         :return: None
         """
-        self.setup_with_file('cfg/contactgroup/alignak_contactgroup_no_contact.cfg')
+        self.setup_with_file('cfg/contactgroup/fusionsupervision_contactgroup_no_contact.cfg')
         assert self.conf_is_correct
 
         assert len(self._scheduler.contactgroups) == \
@@ -177,7 +198,7 @@ class TestContactGroup(AlignakTest):
         assert self.conf_is_correct
         self.nb_contactgroups = len(self._scheduler.contactgroups)
 
-        self.setup_with_file('cfg/contactgroup/alignak_contactgroup_with_space.cfg')
+        self.setup_with_file('cfg/contactgroup/fusionsupervision_contactgroup_with_space.cfg')
         assert self.conf_is_correct
 
         # Two more groups than the default configuration
@@ -206,7 +227,7 @@ class TestContactGroup(AlignakTest):
         """ Test that contacts groups correctly manage inheritance
         :return: None
         """
-        self.setup_with_file('cfg/contactgroup/alignak_contactgroups_plus_inheritance.cfg')
+        self.setup_with_file('cfg/contactgroup/fusionsupervision_contactgroups_plus_inheritance.cfg')
         assert self.conf_is_correct
 
         host0 = self._scheduler.hosts.find_by_name("test_host_0")

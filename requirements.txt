@@ -1,5 +1,5 @@
 # Application deployment requirements
-# Including dependencies version which Alignak was tested with
+# Including dependencies version which FusionSupervision Engine was tested with
 # ----------
 # It is important to set a version for the Python packages; this will make sure on a
 # production server that the expected versions are those installed
@@ -15,7 +15,7 @@
 future
 six
 
-# Alignak supports a recent CherryPy
+# FusionSupervision Engine supports a recent CherryPy
 CherryPy==15.0.0
 
 # Requests to communicate between the daemons
@@ -40,15 +40,15 @@ numpy==1.14.3
 # SSL between the daemons
 # This requirement is only a requirement if you intend to use SLL for the inter-daemons
 # communication. As such, to avoid installing this library per default, commenting this line!
-# Uncomment or `pip install pyopenssl` if SSL must be used between the Alignak daemons
+# Uncomment or `pip install pyopenssl` if SSL must be used between the FusionSupervision Engine daemons
 # pyopenssl
 
 # configparser is used to parse the main configuration file
 configparser; python_version == '2.7'
-# docopt is used by the alignak_environment script
+# docopt is used by the fusionsupervision_environment script
 docopt
 
-# Use psutil for daemons memory monitoring (env ALIGNAK_DAEMONS_MONITORING)
-# Use psutil for scheduler ALIGNAK_LOG_MONITORING
+# Use psutil for daemons memory monitoring (env FUSIONSUPERVISION_DAEMONS_MONITORING)
+# Use psutil for scheduler FUSIONSUPERVISION_LOG_MONITORING
 # Use psutil for launching daemons from the Arbiter
 psutil>=5.4.3,<=5.4.5

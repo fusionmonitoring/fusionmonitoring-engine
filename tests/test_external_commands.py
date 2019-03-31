@@ -1,69 +1,91 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2015-2018: Alignak team, see AUTHORS.txt file for contributors
+# Copyright (C) 2019-2019: FusionSupervision team, see AUTHORS.md file for contributors
 #
-# This file is part of Alignak.
+# This file is part of FusionSupervision engine.
 #
-# Alignak is free software: you can redistribute it and/or modify
+# FusionSupervision is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# Alignak is distributed in the hope that it will be useful,
+# FusionSupervision is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU Affero General Public License for more details.
 #
 # You should have received a copy of the GNU Affero General Public License
-# along with Alignak.  If not, see <http://www.gnu.org/licenses/>.
+# along with FusionSupervision engine.  If not, see <http://www.gnu.org/licenses/>.
 #
 #
 # This file incorporates work covered by the following copyright and
 # permission notice:
 #
-#  Copyright (C) 2009-2014:
-#     Hartmut Goebel, h.goebel@goebel-consult.de
-#     Frédéric MOHIER, frederic.mohier@ipmfrance.com
-#     aviau, alexandre.viau@savoirfairelinux.com
-#     Grégory Starck, g.starck@gmail.com
-#     Sebastien Coavoux, s.coavoux@free.fr
-#     Jean Gabes, naparuba@gmail.com
-#     Zoran Zaric, zz@zoranzaric.de
-#     Gerhard Lausser, gerhard.lausser@consol.de
-
-#  This file is part of Shinken.
+#  Copyright (C) 2015-2018: Alignak team, see AUTHORS.alignak.txt file for contributors
 #
-#  Shinken is free software: you can redistribute it and/or modify
+#  This file is part of Alignak.
+#
+#  Alignak is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU Affero General Public License as published by
 #  the Free Software Foundation, either version 3 of the License, or
 #  (at your option) any later version.
 #
-#  Shinken is distributed in the hope that it will be useful,
+#  Alignak is distributed in the hope that it will be useful,
 #  but WITHOUT ANY WARRANTY; without even the implied warranty of
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #  GNU Affero General Public License for more details.
 #
 #  You should have received a copy of the GNU Affero General Public License
-#  along with Shinken.  If not, see <http://www.gnu.org/licenses/>.
+#  along with Alignak.  If not, see <http://www.gnu.org/licenses/>.
+#
+#
+#  This file incorporates work covered by the following copyright and
+#  permission notice:
+#
+#   Copyright (C) 2009-2014:
+#      Hartmut Goebel, h.goebel@goebel-consult.de
+#      Frédéric MOHIER, frederic.mohier@ipmfrance.com
+#      aviau, alexandre.viau@savoirfairelinux.com
+#      Grégory Starck, g.starck@gmail.com
+#      Sebastien Coavoux, s.coavoux@free.fr
+#      Jean Gabes, naparuba@gmail.com
+#      Zoran Zaric, zz@zoranzaric.de
+#      Gerhard Lausser, gerhard.lausser@consol.de
+#
+#   This file is part of Shinken.
+#
+#   Shinken is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU Affero General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   Shinken is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU Affero General Public License for more details.
+#
+#   You should have received a copy of the GNU Affero General Public License
+#   along with Shinken.  If not, see <http://www.gnu.org/licenses/>.
 
 #
 # This file is used to test reading and processing of config files
 #
+
 import re
 import time
 import datetime
 import pytest
 from freezegun import freeze_time
 
-from .alignak_test import AlignakTest
-from .alignak_test import ExternalCommandManager
-from alignak.misc.common import DICT_MODATTR
-from alignak.misc.serialization import serialize, unserialize
-from alignak.external_command import ExternalCommand
+from .fusionsupervision_test import FusionsupervisionTest
+from .fusionsupervision_test import ExternalCommandManager
+from fusionsupervision.misc.common import DICT_MODATTR
+from fusionsupervision.misc.serialization import serialize, unserialize
+from fusionsupervision.external_command import ExternalCommand
 
 
-class TestExternalCommands(AlignakTest):
+class TestExternalCommands(FusionsupervisionTest):
     """
     This class tests the external commands
     """
@@ -141,7 +163,7 @@ class TestExternalCommands(AlignakTest):
         # Resolve command result is None because the command is not recognized
         assert res is None
         self.assert_any_log_match(
-            re.escape(u"WARNING: [arbiter-master.alignak.external_command] "
+            re.escape(u"WARNING: [arbiter-master.fusionsupervision.external_command] "
                       u"External command 'command' is not recognized, sorry")
         )
 
@@ -153,7 +175,7 @@ class TestExternalCommands(AlignakTest):
         res = self.manage_external_command(excmd)
         if self.ecm_mode == 'applyer':
             self.assert_any_log_match(
-                re.escape(u"WARNING: [arbiter-master.alignak.external_command] "
+                re.escape(u"WARNING: [arbiter-master.fusionsupervision.external_command] "
                           u"The external command 'SHUTDOWN_PROGRAM' is not currently "
                           u"implemented in Alignak.")
             )
@@ -170,7 +192,7 @@ class TestExternalCommands(AlignakTest):
         res = self.manage_external_command(excmd)
         if self.ecm_mode == 'applyer':
             self.assert_any_log_match(
-                re.escape("WARNING: [arbiter-master.alignak.external_command] The external command "
+                re.escape("WARNING: [arbiter-master.fusionsupervision.external_command] The external command "
                           "'SHUTDOWN_PROGRAM' is not currently implemented in Alignak.")
             )
         else:
@@ -187,7 +209,7 @@ class TestExternalCommands(AlignakTest):
         # Resolve command result is not None because the command is recognized
         assert res is None
         self.assert_any_log_match(
-            re.escape("WARNING: [arbiter-master.alignak.external_command] Malformed command "
+            re.escape("WARNING: [arbiter-master.fusionsupervision.external_command] Malformed command "
                       "'[fake] shutdown_program'")
         )
 

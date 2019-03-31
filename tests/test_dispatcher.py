@@ -1,23 +1,45 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2015-2018: Alignak team, see AUTHORS.txt file for contributors
+# Copyright (C) 2019-2019: FusionSupervision team, see AUTHORS.md file for contributors
 #
-# This file is part of Alignak.
+# This file is part of FusionSupervision engine.
 #
-# Alignak is free software: you can redistribute it and/or modify
+# FusionSupervision is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# Alignak is distributed in the hope that it will be useful,
+# FusionSupervision is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU Affero General Public License for more details.
 #
 # You should have received a copy of the GNU Affero General Public License
-# along with Alignak.  If not, see <http://www.gnu.org/licenses/>.
+# along with FusionSupervision engine.  If not, see <http://www.gnu.org/licenses/>.
 #
+#
+# This file incorporates work covered by the following copyright and
+# permission notice:
+#
+#  Copyright (C) 2015-2018: Alignak team, see AUTHORS.alignak.txt file for contributors
+#
+#  This file is part of Alignak.
+#
+#  Alignak is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU Affero General Public License as published by
+#  the Free Software Foundation, either version 3 of the License, or
+#  (at your option) any later version.
+#
+#  Alignak is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU Affero General Public License for more details.
+#
+#  You should have received a copy of the GNU Affero General Public License
+#  along with Alignak.  If not, see <http://www.gnu.org/licenses/>.
+#
+
 """
 This file tests the dispatcher (distribute configuration to satellites)
 """
@@ -31,14 +53,14 @@ import logging
 import requests_mock
 from six import string_types
 from freezegun import freeze_time
-from .alignak_test import AlignakTest
-from alignak.log import ALIGNAK_LOGGER_NAME
-from alignak.misc.serialization import unserialize
-from alignak.daemons.arbiterdaemon import Arbiter
-from alignak.dispatcher import Dispatcher, DispatcherError
+from .fusionsupervision_test import FusionsupervisionTest
+from fusionsupervision.log import ALIGNAK_LOGGER_NAME
+from fusionsupervision.misc.serialization import unserialize
+from fusionsupervision.daemons.arbiterdaemon import Arbiter
+from fusionsupervision.dispatcher import Dispatcher, DispatcherError
 
 
-class TestDispatcher(AlignakTest):
+class TestDispatcher(FusionsupervisionTest):
     """
     This class tests the dispatcher (distribute configuration to satellites)
     """
@@ -71,10 +93,10 @@ class TestDispatcher(AlignakTest):
         :return: None
         """
         args = {
-            'env_file': env_filename, 'alignak_name': 'alignak-test', 'daemon_name': 'arbiter-master'
+            'env_file': env_filename, 'fusionsupervision_name': 'fusionsupervision-test', 'daemon_name': 'arbiter-master'
         }
         my_arbiter = Arbiter(**args)
-        my_arbiter.setup_alignak_logger()
+        my_arbiter.setup_fusionsupervision_logger()
 
         # Clear logs
         self.clear_logs()
@@ -82,7 +104,7 @@ class TestDispatcher(AlignakTest):
         # my_arbiter.load_modules_manager()
         my_arbiter.load_monitoring_config_file()
         assert my_arbiter.conf.conf_is_correct is True
-        # logging.getLogger('alignak').setLevel(logging.DEBUG)
+        # logging.getLogger('fusionsupervision').setLevel(logging.DEBUG)
 
         objects_map = {}
         for _, _, strclss, _, _ in list(my_arbiter.conf.types_creations.values()):
@@ -260,8 +282,8 @@ class TestDispatcher(AlignakTest):
 
                         from pprint import pprint
                         pprint(conf)
-                        assert 'alignak_name' in conf
-                        assert conf['alignak_name'] == 'My Alignak'
+                        assert 'fusionsupervision_name' in conf
+                        assert conf['fusionsupervision_name'] == 'My Alignak'
 
                         assert 'self_conf' in conf
                         assert conf['self_conf']
@@ -426,7 +448,7 @@ class TestDispatcher(AlignakTest):
         """
         args = {
             'env_file': 'cfg/dispatcher/two_master_arbiters.ini',
-            'alignak_name': 'alignak-test', 'daemon_name': 'arbiter-master'
+            'fusionsupervision_name': 'fusionsupervision-test', 'daemon_name': 'arbiter-master'
         }
         self.my_arbiter = Arbiter(**args)
 

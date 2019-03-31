@@ -1,23 +1,45 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2015-2018: Alignak team, see AUTHORS.txt file for contributors
+# Copyright (C) 2019-2019: FusionSupervision team, see AUTHORS.md file for contributors
 #
-# This file is part of Alignak.
+# This file is part of FusionSupervision engine.
 #
-# Alignak is free software: you can redistribute it and/or modify
+# FusionSupervision is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# Alignak is distributed in the hope that it will be useful,
+# FusionSupervision is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU Affero General Public License for more details.
 #
 # You should have received a copy of the GNU Affero General Public License
-# along with Alignak.  If not, see <http://www.gnu.org/licenses/>.
+# along with FusionSupervision engine.  If not, see <http://www.gnu.org/licenses/>.
 #
+#
+# This file incorporates work covered by the following copyright and
+# permission notice:
+#
+#  Copyright (C) 2015-2018: Alignak team, see AUTHORS.alignak.txt file for contributors
+#
+#  This file is part of Alignak.
+#
+#  Alignak is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU Affero General Public License as published by
+#  the Free Software Foundation, either version 3 of the License, or
+#  (at your option) any later version.
+#
+#  Alignak is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU Affero General Public License for more details.
+#
+#  You should have received a copy of the GNU Affero General Public License
+#  along with Alignak.  If not, see <http://www.gnu.org/licenses/>.
+#
+
 """
 Test Alignak inner modules : plain-old Nagios legacy compatibility
 """
@@ -29,13 +51,13 @@ import time
 import json
 import logging
 import configparser
-from alignak.log import ALIGNAK_LOGGER_NAME
-from .alignak_test import AlignakTest, CollectorHandler
-from alignak.modulesmanager import ModulesManager, MODULE_INIT_PERIOD
-from alignak.objects.module import Module
+from fusionsupervision.log import ALIGNAK_LOGGER_NAME
+from .fusionsupervision_test import FusionsupervisionTest, CollectorHandler
+from fusionsupervision.modulesmanager import ModulesManager, MODULE_INIT_PERIOD
+from fusionsupervision.objects.module import Module
 import pytest
 
-class TestInnerModules(AlignakTest):
+class TestInnerModules(FusionsupervisionTest):
     """
     This class contains the tests for the Alignak inner defined modules
     """
@@ -51,10 +73,10 @@ class TestInnerModules(AlignakTest):
         self._module_inner_retention()
 
 
-    def test_module_inner_retention_alignak_ini(self):
+    def test_module_inner_retention_fusionsupervision_ini(self):
         """ Test the inner retention module
 
-        Configured in alignak.ini file
+        Configured in fusionsupervision.ini file
         """
         self._module_inner_retention()
 
@@ -68,7 +90,7 @@ class TestInnerModules(AlignakTest):
 
         :return:
         """
-        self.cfg_folder = '/tmp/alignak'
+        self.cfg_folder = '/tmp/fusionsupervision'
         cfg_dir = 'default_many_hosts'
         hosts_count = 2
         realms = ['All']
@@ -77,8 +99,8 @@ class TestInnerModules(AlignakTest):
         self._prepare_configuration(copy=True, cfg_folder=self.cfg_folder)
 
         # Specific daemon load configuration preparation
-        if os.path.exists('./cfg/%s/alignak.cfg' % cfg_dir):
-            shutil.copy('./cfg/%s/alignak.cfg' % cfg_dir, '%s/etc' % self.cfg_folder)
+        if os.path.exists('./cfg/%s/fusionsupervision.cfg' % cfg_dir):
+            shutil.copy('./cfg/%s/fusionsupervision.cfg' % cfg_dir, '%s/etc' % self.cfg_folder)
         if os.path.exists('%s/etc/arbiter' % self.cfg_folder):
             shutil.rmtree('%s/etc/arbiter' % self.cfg_folder)
         shutil.copytree('./cfg/%s/arbiter' % cfg_dir, '%s/etc/arbiter' % self.cfg_folder)
@@ -89,15 +111,15 @@ class TestInnerModules(AlignakTest):
                                           realms=realms)
 
         # Update the default configuration files
-        files = ['%s/etc/alignak.ini' % self.cfg_folder]
+        files = ['%s/etc/fusionsupervision.ini' % self.cfg_folder]
         try:
             cfg = configparser.ConfigParser()
             cfg.read(files)
 
             # Define Nagios state retention module configuration parameter
             if not legacy_cfg:
-                cfg.set('alignak-configuration', 'retain_state_information', '1')
-                cfg.set('alignak-configuration', 'state_retention_file',
+                cfg.set('fusionsupervision-configuration', 'retain_state_information', '1')
+                cfg.set('fusionsupervision-configuration', 'state_retention_file',
                         '%s/retention.json' % self.cfg_folder)
 
             # # Define the inner retention module
@@ -108,9 +130,9 @@ class TestInnerModules(AlignakTest):
             # cfg.add_section('module.inner-retention')
             # cfg.set('module.inner-retention', 'name', 'inner-retention')
             # cfg.set('module.inner-retention', 'type', 'retention')
-            # cfg.set('module.inner-retention', 'python_name', 'alignak.modules.retention')
+            # cfg.set('module.inner-retention', 'python_name', 'fusionsupervision.modules.retention')
 
-            with open('%s/etc/alignak.ini' % self.cfg_folder, "w") as modified:
+            with open('%s/etc/fusionsupervision.ini' % self.cfg_folder, "w") as modified:
                 cfg.write(modified)
         except Exception as exp:
             print("* parsing error in config file: %s" % exp)
@@ -118,10 +140,10 @@ class TestInnerModules(AlignakTest):
 
         # # Define Nagios state retention module configuration parameter
         if legacy_cfg:
-            with open('%s/etc/alignak.cfg' % self.cfg_folder, "a") as modified:
+            with open('%s/etc/fusionsupervision.cfg' % self.cfg_folder, "a") as modified:
                 modified.write("retain_state_information=1\n\nstate_retention_file=/tmp/retention.json")
 
-        self.setup_with_file(env_file='%s/etc/alignak.ini' % self.cfg_folder)
+        self.setup_with_file(env_file='%s/etc/fusionsupervision.ini' % self.cfg_folder)
         assert self.conf_is_correct
         self.show_configuration_logs()
 
@@ -133,13 +155,13 @@ class TestInnerModules(AlignakTest):
 
         # Loading module logs
         self.assert_any_log_match(re.escape(
-            u"Importing Python module 'alignak.modules.inner_retention' for inner-retention..."
+            u"Importing Python module 'fusionsupervision.modules.inner_retention' for inner-retention..."
         ))
         self.assert_any_log_match(re.escape(
-            u"Imported 'alignak.modules.inner_retention' for inner-retention"
+            u"Imported 'fusionsupervision.modules.inner_retention' for inner-retention"
         ))
         self.assert_any_log_match(re.escape(
-            u"Give an instance of alignak.modules.inner_retention for alias: inner-retention"
+            u"Give an instance of fusionsupervision.modules.inner_retention for alias: inner-retention"
         ))
         self.assert_any_log_match(re.escape(
             u"I correctly loaded my modules: [inner-retention]"
@@ -154,8 +176,8 @@ class TestInnerModules(AlignakTest):
         self.clear_logs()
         self._scheduler.hook_point('save_retention')
         self.show_logs()
-        assert os.path.exists('/tmp/alignak/retention.json')
-        with open('/tmp/alignak/retention.json', "r") as fd:
+        assert os.path.exists('/tmp/fusionsupervision/retention.json')
+        with open('/tmp/fusionsupervision/retention.json', "r") as fd:
             response = json.load(fd)
 
         # Load retention - file is now existing

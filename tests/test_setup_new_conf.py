@@ -1,23 +1,45 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2015-2018: Alignak team, see AUTHORS.txt file for contributors
+# Copyright (C) 2019-2019: FusionSupervision team, see AUTHORS.md file for contributors
 #
-# This file is part of Alignak.
+# This file is part of FusionSupervision engine.
 #
-# Alignak is free software: you can redistribute it and/or modify
+# FusionSupervision is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# Alignak is distributed in the hope that it will be useful,
+# FusionSupervision is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU Affero General Public License for more details.
 #
 # You should have received a copy of the GNU Affero General Public License
-# along with Alignak.  If not, see <http://www.gnu.org/licenses/>.
+# along with FusionSupervision engine.  If not, see <http://www.gnu.org/licenses/>.
 #
+#
+# This file incorporates work covered by the following copyright and
+# permission notice:
+#
+#  Copyright (C) 2015-2018: Alignak team, see AUTHORS.alignak.txt file for contributors
+#
+#  This file is part of Alignak.
+#
+#  Alignak is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU Affero General Public License as published by
+#  the Free Software Foundation, either version 3 of the License, or
+#  (at your option) any later version.
+#
+#  Alignak is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU Affero General Public License for more details.
+#
+#  You should have received a copy of the GNU Affero General Public License
+#  along with Alignak.  If not, see <http://www.gnu.org/licenses/>.
+#
+
 """
 This file test load the new conf on each module
 """
@@ -25,15 +47,15 @@ This file test load the new conf on each module
 import logging
 import psutil
 import requests_mock
-from .alignak_test import AlignakTest
-from alignak.daemons.schedulerdaemon import Alignak as schedulerdaemon
-from alignak.daemons.receiverdaemon import Receiver as receiverdaemon
-from alignak.daemons.pollerdaemon import Poller as pollerdaemon
-from alignak.daemons.brokerdaemon import Broker as brokerdaemon
-from alignak.daemons.reactionnerdaemon import Reactionner as reactionnerdaemon
+from .fusionsupervision_test import FusionsupervisionTest
+from fusionsupervision.daemons.schedulerdaemon import Alignak as schedulerdaemon
+from fusionsupervision.daemons.receiverdaemon import Receiver as receiverdaemon
+from fusionsupervision.daemons.pollerdaemon import Poller as pollerdaemon
+from fusionsupervision.daemons.brokerdaemon import Broker as brokerdaemon
+from fusionsupervision.daemons.reactionnerdaemon import Reactionner as reactionnerdaemon
 
 
-class TestSetupNewConf(AlignakTest):
+class TestSetupNewConf(FusionsupervisionTest):
     """
     This class will test load new conf for each modules (broker, scheduler...)
 
@@ -79,11 +101,11 @@ class TestSetupNewConf(AlignakTest):
         :return: None
         """
         self.setup_with_file('cfg/cfg_default_with_modules.cfg',
-                             'cfg/default_with_modules/alignak.ini')
+                             'cfg/default_with_modules/fusionsupervision.ini')
 
         args = {
             'env_file': self.env_filename,
-            'alignak_name': 'my-alignak', 'daemon_name': 'unset',
+            'fusionsupervision_name': 'my-fusionsupervision', 'daemon_name': 'unset',
         }
         scheduler_daemon = schedulerdaemon(**args)
         # scheduler_daemon.load_modules_manager()
@@ -118,7 +140,7 @@ class TestSetupNewConf(AlignakTest):
 
         # send new conf, so it's the second time. This to test the cleanup
         self.setup_with_file('cfg/cfg_default_with_modules.cfg',
-                             'cfg/default_with_modules/alignak.ini')
+                             'cfg/default_with_modules/fusionsupervision.ini')
         scheduler_link = None
         for satellite in self._arbiter.dispatcher.schedulers:
             scheduler_link = satellite
@@ -156,11 +178,11 @@ class TestSetupNewConf(AlignakTest):
         :return: None
         """
         self.setup_with_file('cfg/cfg_default_with_modules.cfg',
-                             'cfg/default_with_modules/alignak.ini')
+                             'cfg/default_with_modules/fusionsupervision.ini')
 
         args = {
             'env_file': self.env_filename,
-            'alignak_name': 'my-alignak', 'daemon_name': 'unset',
+            'fusionsupervision_name': 'my-fusionsupervision', 'daemon_name': 'unset',
         }
         receiv = receiverdaemon(**args)
         # receiv.load_modules_manager()
@@ -183,7 +205,7 @@ class TestSetupNewConf(AlignakTest):
 
         # send new conf, so it's the second time. This test the cleanup
         self.setup_with_file('cfg/cfg_default_with_modules.cfg',
-                             'cfg/default_with_modules/alignak.ini')
+                             'cfg/default_with_modules/fusionsupervision.ini')
         for satellite in self._arbiter.dispatcher.satellites:
             if satellite.type == 'receiver':
                 receiv.new_conf = satellite.cfg
@@ -199,11 +221,11 @@ class TestSetupNewConf(AlignakTest):
         :return: None
         """
         self.setup_with_file('cfg/cfg_default_with_modules.cfg',
-                             'cfg/default_with_modules/alignak.ini')
+                             'cfg/default_with_modules/fusionsupervision.ini')
 
         args = {
             'env_file': self.env_filename,
-            'alignak_name': 'my-alignak', 'daemon_name': 'unset',
+            'fusionsupervision_name': 'my-fusionsupervision', 'daemon_name': 'unset',
         }
         poller = pollerdaemon(**args)
         # poller.load_modules_manager()
@@ -223,7 +245,7 @@ class TestSetupNewConf(AlignakTest):
 
         # send new conf, so it's the second time. This test the cleanup
         self.setup_with_file('cfg/cfg_default_with_modules.cfg',
-                             'cfg/default_with_modules/alignak.ini')
+                             'cfg/default_with_modules/fusionsupervision.ini')
         for satellite in self._arbiter.dispatcher.satellites:
             if satellite.type == 'poller':
                 poller.new_conf = satellite.cfg
@@ -239,11 +261,11 @@ class TestSetupNewConf(AlignakTest):
         :return: None
         """
         self.setup_with_file('cfg/cfg_default_with_modules.cfg',
-                             'cfg/default_with_modules/alignak.ini')
+                             'cfg/default_with_modules/fusionsupervision.ini')
 
         args = {
             'env_file': self.env_filename,
-            'alignak_name': 'my-alignak', 'daemon_name': 'broker-master',
+            'fusionsupervision_name': 'my-fusionsupervision', 'daemon_name': 'broker-master',
         }
         broker = brokerdaemon(**args)
         # broker.load_modules_manager()
@@ -285,7 +307,7 @@ class TestSetupNewConf(AlignakTest):
 
         # send new conf, so it's the second time. This tests the cleanup
         self.setup_with_file('cfg/cfg_default_with_modules.cfg',
-                             'cfg/default_with_modules/alignak.ini')
+                             'cfg/default_with_modules/fusionsupervision.ini')
         broker_link = None
         for satellite in self._arbiter.dispatcher.satellites:
             if satellite.type == 'broker':
@@ -321,11 +343,11 @@ class TestSetupNewConf(AlignakTest):
         :return: None
         """
         self.setup_with_file('cfg/cfg_default_with_modules.cfg',
-                             'cfg/default_with_modules/alignak.ini')
+                             'cfg/default_with_modules/fusionsupervision.ini')
 
         args = {
             'env_file': self.env_filename,
-            'alignak_name': 'my-alignak', 'daemon_name': 'unset',
+            'fusionsupervision_name': 'my-fusionsupervision', 'daemon_name': 'unset',
         }
         reac = reactionnerdaemon(**args)
         # reac.load_modules_manager()
@@ -345,7 +367,7 @@ class TestSetupNewConf(AlignakTest):
 
         # send new conf, so it's the second time. This test the cleanup
         self.setup_with_file('cfg/cfg_default_with_modules.cfg',
-                             'cfg/default_with_modules/alignak.ini')
+                             'cfg/default_with_modules/fusionsupervision.ini')
         for satellite in self._arbiter.dispatcher.satellites:
             if satellite.type == 'reactionner':
                 reac.new_conf = satellite.cfg

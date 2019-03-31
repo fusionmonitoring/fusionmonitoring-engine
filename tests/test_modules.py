@@ -1,51 +1,72 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2015-2018: Alignak team, see AUTHORS.txt file for contributors
+# Copyright (C) 2019-2019: FusionSupervision team, see AUTHORS.md file for contributors
 #
-# This file is part of Alignak.
+# This file is part of FusionSupervision engine.
 #
-# Alignak is free software: you can redistribute it and/or modify
+# FusionSupervision is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# Alignak is distributed in the hope that it will be useful,
+# FusionSupervision is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU Affero General Public License for more details.
 #
 # You should have received a copy of the GNU Affero General Public License
-# along with Alignak.  If not, see <http://www.gnu.org/licenses/>.
+# along with FusionSupervision engine.  If not, see <http://www.gnu.org/licenses/>.
 #
 #
 # This file incorporates work covered by the following copyright and
 # permission notice:
 #
-#  Copyright (C) 2009-2014:
-#     Hartmut Goebel, h.goebel@goebel-consult.de
-#     aviau, alexandre.viau@savoirfairelinux.com
-#     Grégory Starck, g.starck@gmail.com
-#     Alexander Springer, alex.spri@gmail.com
-#     Sebastien Coavoux, s.coavoux@free.fr
-#     Thibault Cohen, titilambert@gmail.com
-#     Jean Gabes, naparuba@gmail.com
-#     Gerhard Lausser, gerhard.lausser@consol.de
-
-#  This file is part of Shinken.
+#  Copyright (C) 2015-2018: Alignak team, see AUTHORS.alignak.txt file for contributors
 #
-#  Shinken is free software: you can redistribute it and/or modify
+#  This file is part of Alignak.
+#
+#  Alignak is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU Affero General Public License as published by
 #  the Free Software Foundation, either version 3 of the License, or
 #  (at your option) any later version.
 #
-#  Shinken is distributed in the hope that it will be useful,
+#  Alignak is distributed in the hope that it will be useful,
 #  but WITHOUT ANY WARRANTY; without even the implied warranty of
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #  GNU Affero General Public License for more details.
 #
 #  You should have received a copy of the GNU Affero General Public License
-#  along with Shinken.  If not, see <http://www.gnu.org/licenses/>.
+#  along with Alignak.  If not, see <http://www.gnu.org/licenses/>.
+#
+#
+#  This file incorporates work covered by the following copyright and
+#  permission notice:
+#
+#   Copyright (C) 2009-2014:
+#      Hartmut Goebel, h.goebel@goebel-consult.de
+#      aviau, alexandre.viau@savoirfairelinux.com
+#      Grégory Starck, g.starck@gmail.com
+#      Alexander Springer, alex.spri@gmail.com
+#      Sebastien Coavoux, s.coavoux@free.fr
+#      Thibault Cohen, titilambert@gmail.com
+#      Jean Gabes, naparuba@gmail.com
+#      Gerhard Lausser, gerhard.lausser@consol.de
+#
+#   This file is part of Shinken.
+#
+#   Shinken is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU Affero General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   Shinken is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU Affero General Public License for more details.
+#
+#   You should have received a copy of the GNU Affero General Public License
+#   along with Shinken.  If not, see <http://www.gnu.org/licenses/>.
 
 """
 Test Alignak modules manager
@@ -54,14 +75,14 @@ Test Alignak modules manager
 import re
 import time
 import logging
-from alignak.log import ALIGNAK_LOGGER_NAME
-from .alignak_test import AlignakTest, CollectorHandler
-from alignak.modulesmanager import ModulesManager, MODULE_INIT_PERIOD
-from alignak.objects.module import Module
+from fusionsupervision.log import ALIGNAK_LOGGER_NAME
+from .fusionsupervision_test import FusionsupervisionTest, CollectorHandler
+from fusionsupervision.modulesmanager import ModulesManager, MODULE_INIT_PERIOD
+from fusionsupervision.objects.module import Module
 import pytest
 
 
-class TestModules(AlignakTest):
+class TestModules(FusionsupervisionTest):
     """
     This class contains the tests for the modules
     """
@@ -75,7 +96,7 @@ class TestModules(AlignakTest):
         :return:
         """
         self.setup_with_file('cfg/cfg_default_with_modules.cfg',
-                             'cfg/default_with_modules/alignak.ini')
+                             'cfg/default_with_modules/fusionsupervision.ini')
         assert self.conf_is_correct
         self.show_configuration_logs()
         self.show_logs()
@@ -114,13 +135,13 @@ class TestModules(AlignakTest):
 
         # Loading module logs
         self.assert_any_log_match(re.escape(
-            u"Importing Python module 'alignak_module_example' for Example..."
+            u"Importing Python module 'fusionsupervision_module_example' for Example..."
         ))
         self.assert_any_log_match(re.escape(
-            u"Imported 'alignak_module_example' for Example"
+            u"Imported 'fusionsupervision_module_example' for Example"
         ))
         self.assert_any_log_match(re.escape(
-            u"Give an instance of alignak_module_example for alias: Example"
+            u"Give an instance of fusionsupervision_module_example for alias: Example"
         ))
         self.assert_any_log_match(re.escape(
             u"I correctly loaded my modules: [Example]"
@@ -146,7 +167,7 @@ class TestModules(AlignakTest):
         Check that the feature is detected as disabled
         :return:
         """
-        self.setup_with_file('cfg/modules/alignak_module_with_submodules.cfg')
+        self.setup_with_file('cfg/modules/fusionsupervision_module_with_submodules.cfg')
         assert self.conf_is_correct
         self.show_configuration_logs()
 
@@ -187,14 +208,14 @@ class TestModules(AlignakTest):
         :return:
         """
         self.setup_with_file('cfg/cfg_default_with_modules.cfg',
-                             'cfg/default_with_modules/alignak.ini')
+                             'cfg/default_with_modules/fusionsupervision.ini')
         assert self.conf_is_correct
 
         # Create an Alignak module
         mod = Module({
             'module_alias': 'mod-example',
             'module_types': 'example',
-            'python_name': 'alignak_module_example'
+            'python_name': 'fusionsupervision_module_example'
         })
         self.run_modulemanager(mod)
 
@@ -205,14 +226,14 @@ class TestModules(AlignakTest):
         :return:
         """
         self.setup_with_file('cfg/cfg_default_with_modules.cfg',
-                             'cfg/default_with_modules/alignak.ini')
+                             'cfg/default_with_modules/fusionsupervision.ini')
         assert self.conf_is_correct
 
         # Create an Alignak module
         mod = Module({
             'name': 'mod-example',
             'type': 'example',
-            'python_name': 'alignak_module_example'
+            'python_name': 'fusionsupervision_module_example'
         })
         self.run_modulemanager(mod)
 
@@ -230,13 +251,13 @@ class TestModules(AlignakTest):
 
         # Loading module logs
         self.assert_any_log_match(re.escape(
-            "Importing Python module 'alignak_module_example' for mod-example..."
+            "Importing Python module 'fusionsupervision_module_example' for mod-example..."
         ))
         self.assert_any_log_match(re.escape(
-            "Imported 'alignak_module_example' for mod-example"
+            "Imported 'fusionsupervision_module_example' for mod-example"
         ))
         self.assert_any_log_match(re.escape(
-            "Give an instance of alignak_module_example for alias: mod-example"
+            "Give an instance of fusionsupervision_module_example for alias: mod-example"
         ))
 
         self.clear_logs()
@@ -495,7 +516,7 @@ class TestModules(AlignakTest):
         :return:
         """
         self.setup_with_file('cfg/cfg_default_with_modules.cfg',
-                             'cfg/default_with_modules/alignak.ini')
+                             'cfg/default_with_modules/fusionsupervision.ini')
         assert self.conf_is_correct
 
         # for mod in self._arbiter.conf.modules:
@@ -505,7 +526,7 @@ class TestModules(AlignakTest):
         mod = Module({
             'module_alias': 'mod-example',
             'module_types': 'example',
-            'python_name': 'alignak_module_example',
+            'python_name': 'fusionsupervision_module_example',
             'option1': 'foo',
             'option2': 'bar',
             'option3': 1
@@ -513,7 +534,7 @@ class TestModules(AlignakTest):
         mod2 = Module({
             'module_alias': 'mod-example-2',
             'module_types': 'example',
-            'python_name': 'alignak_module_example',
+            'python_name': 'fusionsupervision_module_example',
             'option1': 'faa',
             'option2': 'bor',
             'option3': 1
@@ -534,38 +555,38 @@ class TestModules(AlignakTest):
         self.show_logs()
 
         self.assert_any_log_match(re.escape(
-            "Importing Python module 'alignak_module_example' for mod-example..."
+            "Importing Python module 'fusionsupervision_module_example' for mod-example..."
         ))
         self.assert_any_log_match(re.escape(
-            "Imported 'alignak_module_example' for mod-example"
+            "Imported 'fusionsupervision_module_example' for mod-example"
         ))
         self.assert_any_log_match(re.escape(
-            "Loaded Python module 'alignak_module_example' (mod-example)"
+            "Loaded Python module 'fusionsupervision_module_example' (mod-example)"
         ))
         self.assert_any_log_match(re.escape(
-            "Importing Python module 'alignak_module_example' for mod-example-2..."
+            "Importing Python module 'fusionsupervision_module_example' for mod-example-2..."
         ))
         self.assert_any_log_match(re.escape(
-            "Imported 'alignak_module_example' for mod-example-2"
+            "Imported 'fusionsupervision_module_example' for mod-example-2"
         ))
         self.assert_any_log_match(re.escape(
-            "Loaded Python module 'alignak_module_example' (mod-example-2)"
+            "Loaded Python module 'fusionsupervision_module_example' (mod-example-2)"
         ))
         self.assert_any_log_match(re.escape(
-            "Give an instance of alignak_module_example for alias: mod-example"
+            "Give an instance of fusionsupervision_module_example for alias: mod-example"
         ))
         self.assert_any_log_match(re.escape(
             "configuration, foo, bar, 1"
         ))
         self.assert_any_log_match(re.escape(
-            "Give an instance of alignak_module_example for alias: mod-example-2"
+            "Give an instance of fusionsupervision_module_example for alias: mod-example-2"
         ))
         self.assert_any_log_match(re.escape(
             "configuration, faa, bor, 1"
         ))
         # Loading module logs
         self.assert_any_log_match(re.escape(
-            "Importing Python module 'alignak_module_example' for mod-example..."
+            "Importing Python module 'fusionsupervision_module_example' for mod-example..."
         ))
 
         my_module = self.modules_manager.instances[0]

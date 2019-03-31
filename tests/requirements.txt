@@ -35,4 +35,4 @@ pep257
 freezegun
 
 # Alignak example module (develop branch)
--e git+git://github.com/Alignak-monitoring/alignak-module-example.git@python3#egg=alignak-module-example
+-e git+git://github.com/Alignak-monitoring/fusionsupervision-module-example.git@python3#egg=fusionsupervision-module-example

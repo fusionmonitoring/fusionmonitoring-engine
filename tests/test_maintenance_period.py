@@ -1,48 +1,69 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2015-2018: Alignak team, see AUTHORS.txt file for contributors
+# Copyright (C) 2019-2019: FusionSupervision team, see AUTHORS.md file for contributors
 #
-# This file is part of Alignak.
+# This file is part of FusionSupervision engine.
 #
-# Alignak is free software: you can redistribute it and/or modify
+# FusionSupervision is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# Alignak is distributed in the hope that it will be useful,
+# FusionSupervision is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU Affero General Public License for more details.
 #
 # You should have received a copy of the GNU Affero General Public License
-# along with Alignak.  If not, see <http://www.gnu.org/licenses/>.
+# along with FusionSupervision engine.  If not, see <http://www.gnu.org/licenses/>.
 #
 #
 # This file incorporates work covered by the following copyright and
 # permission notice:
 #
-#  Copyright (C) 2009-2014:
-#     Hartmut Goebel, h.goebel@goebel-consult.de
-#     Grégory Starck, g.starck@gmail.com
-#     Sebastien Coavoux, s.coavoux@free.fr
-#     Jean Gabes, naparuba@gmail.com
-#     Zoran Zaric, zz@zoranzaric.de
-#     Gerhard Lausser, gerhard.lausser@consol.de
+#  Copyright (C) 2015-2018: Alignak team, see AUTHORS.alignak.txt file for contributors
+#
+#  This file is part of Alignak.
+#
+#  Alignak is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU Affero General Public License as published by
+#  the Free Software Foundation, either version 3 of the License, or
+#  (at your option) any later version.
+#
+#  Alignak is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU Affero General Public License for more details.
+#
+#  You should have received a copy of the GNU Affero General Public License
+#  along with Alignak.  If not, see <http://www.gnu.org/licenses/>.
+#
+#
+#  This file incorporates work covered by the following copyright and
+#  permission notice:
+#
+#   Copyright (C) 2009-2014:
+#      Hartmut Goebel, h.goebel@goebel-consult.de
+#      Grégory Starck, g.starck@gmail.com
+#      Sebastien Coavoux, s.coavoux@free.fr
+#      Jean Gabes, naparuba@gmail.com
+#      Zoran Zaric, zz@zoranzaric.de
+#      Gerhard Lausser, gerhard.lausser@consol.de
 
 """
- This file is used to test hosts maintenance_period that will produce a downtime.
+This file is used to test hosts maintenance_period that will produce a downtime.
 """
 
 import time
 from datetime import datetime, timedelta
-from alignak.misc.serialization import unserialize
-from alignak.downtime import Downtime
-from alignak.objects.timeperiod import Timeperiod
+from fusionsupervision.misc.serialization import unserialize
+from fusionsupervision.downtime import Downtime
+from fusionsupervision.objects.timeperiod import Timeperiod
 
-from .alignak_test import AlignakTest
+from .fusionsupervision_test import FusionsupervisionTest
 
-class TestMaintenancePeriod(AlignakTest):
+class TestMaintenancePeriod(FusionsupervisionTest):
     """
     This class tests the maintenance_period
     """

@@ -1,23 +1,45 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2015-2018: Alignak team, see AUTHORS.txt file for contributors
+# Copyright (C) 2019-2019: FusionSupervision team, see AUTHORS.md file for contributors
 #
-# This file is part of Alignak.
+# This file is part of FusionSupervision engine.
 #
-# Alignak is free software: you can redistribute it and/or modify
+# FusionSupervision is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# Alignak is distributed in the hope that it will be useful,
+# FusionSupervision is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU Affero General Public License for more details.
 #
 # You should have received a copy of the GNU Affero General Public License
-# along with Alignak.  If not, see <http://www.gnu.org/licenses/>.
+# along with FusionSupervision engine.  If not, see <http://www.gnu.org/licenses/>.
 #
+#
+# This file incorporates work covered by the following copyright and
+# permission notice:
+#
+#  Copyright (C) 2015-2018: Alignak team, see AUTHORS.alignak.txt file for contributors
+#
+#  This file is part of Alignak.
+#
+#  Alignak is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU Affero General Public License as published by
+#  the Free Software Foundation, either version 3 of the License, or
+#  (at your option) any later version.
+#
+#  Alignak is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU Affero General Public License for more details.
+#
+#  You should have received a copy of the GNU Affero General Public License
+#  along with Alignak.  If not, see <http://www.gnu.org/licenses/>.
+#
+
 """
 This file contains the test for the freshness check feature
 """
@@ -25,18 +47,18 @@ This file contains the test for the freshness check feature
 import time
 import datetime
 from freezegun import freeze_time
-from .alignak_test import AlignakTest
+from .fusionsupervision_test import FusionsupervisionTest
 
 
-class TestPassiveChecks(AlignakTest):
+class TestPassiveChecks(FusionsupervisionTest):
     """
     This class test passive checks for host and services
     """
     def setUp(self):
         super(TestPassiveChecks, self).setUp()
 
-    def test_start_freshness_on_alignak_start(self):
-        """ When alignak starts, freshness period also starts
+    def test_start_freshness_on_fusionsupervision_start(self):
+        """ When fusionsupervision starts, freshness period also starts
         instead are stale and so in end of freshness
 
         :return: None
@@ -47,7 +69,7 @@ class TestPassiveChecks(AlignakTest):
         # Check freshness on each scheduler tick
         self._scheduler.update_recurrent_works_tick({'tick_check_freshness': 1})
 
-        # Test if not schedule a check on passive service/host when start alignak.
+        # Test if not schedule a check on passive service/host when start fusionsupervision.
         # So the freshness start (item.last_state_update) will begin with time.time() of start
         # Alignak
         host = self._scheduler.hosts.find_by_name("test_host_0")
@@ -449,12 +471,12 @@ class TestPassiveChecks(AlignakTest):
         self.show_logs()
 
         # The freshness log is raised for each check attempt
-        assert len(self.get_log_match("alignak.objects.schedulingitem] The freshness period of host 'test_host_B'")) == 5
-        # [1512800594] WARNING: [alignak.objects.schedulingitem] The freshness period of host 'test_host_B' is expired by 0d 0h 0m 1s (threshold=0d 0h 0m 1s + 1s). Attempt: 1 / 5. I'm forcing the state to freshness state (x / SOFT).
-        # [1512800595] WARNING: [alignak.objects.schedulingitem] The freshness period of host 'test_host_B' is expired by 0d 0h 0m 2s (threshold=0d 0h 0m 1s + 1s). Attempt: 2 / 5. I'm forcing the state to freshness state (x / SOFT).
-        # [1512800596] WARNING: [alignak.objects.schedulingitem] The freshness period of host 'test_host_B' is expired by 0d 0h 0m 3s (threshold=0d 0h 0m 1s + 1s). Attempt: 3 / 5. I'm forcing the state to freshness state (x / SOFT).
-        # [1512800597] WARNING: [alignak.objects.schedulingitem] The freshness period of host 'test_host_B' is expired by 0d 0h 0m 4s (threshold=0d 0h 0m 1s + 1s). Attempt: 4 / 5. I'm forcing the state to freshness state (x / SOFT).
-        # [1512800598] WARNING: [alignak.objects.schedulingitem] The freshness period of host 'test_host_B' is expired by 0d 0h 0m 5s (threshold=0d 0h 0m 1s + 1s). Attempt: 5 / 5. I'm forcing the state to freshness state (x / HARD).
+        assert len(self.get_log_match("fusionsupervision.objects.schedulingitem] The freshness period of host 'test_host_B'")) == 5
+        # [1512800594] WARNING: [fusionsupervision.objects.schedulingitem] The freshness period of host 'test_host_B' is expired by 0d 0h 0m 1s (threshold=0d 0h 0m 1s + 1s). Attempt: 1 / 5. I'm forcing the state to freshness state (x / SOFT).
+        # [1512800595] WARNING: [fusionsupervision.objects.schedulingitem] The freshness period of host 'test_host_B' is expired by 0d 0h 0m 2s (threshold=0d 0h 0m 1s + 1s). Attempt: 2 / 5. I'm forcing the state to freshness state (x / SOFT).
+        # [1512800596] WARNING: [fusionsupervision.objects.schedulingitem] The freshness period of host 'test_host_B' is expired by 0d 0h 0m 3s (threshold=0d 0h 0m 1s + 1s). Attempt: 3 / 5. I'm forcing the state to freshness state (x / SOFT).
+        # [1512800597] WARNING: [fusionsupervision.objects.schedulingitem] The freshness period of host 'test_host_B' is expired by 0d 0h 0m 4s (threshold=0d 0h 0m 1s + 1s). Attempt: 4 / 5. I'm forcing the state to freshness state (x / SOFT).
+        # [1512800598] WARNING: [fusionsupervision.objects.schedulingitem] The freshness period of host 'test_host_B' is expired by 0d 0h 0m 5s (threshold=0d 0h 0m 1s + 1s). Attempt: 5 / 5. I'm forcing the state to freshness state (x / HARD).
 
         assert len(self.get_log_match("Attempt: 1 / 5. ")) == 1
         assert len(self.get_log_match("Attempt: 2 / 5. ")) == 1
@@ -555,7 +577,7 @@ class TestPassiveChecks(AlignakTest):
         self.show_logs()
 
         # The freshness log is raised for each check attempt
-        assert len(self.get_log_match("alignak.objects.schedulingitem] The freshness period of host 'test_host_F'")) == 3
+        assert len(self.get_log_match("fusionsupervision.objects.schedulingitem] The freshness period of host 'test_host_F'")) == 3
 
         assert len(self.get_log_match("Attempt: 1 / 3. ")) == 1
         assert len(self.get_log_match("Attempt: 2 / 3. ")) == 1
@@ -726,7 +748,7 @@ class TestPassiveChecks(AlignakTest):
 
         # The freshness log is raised for each check attempt
         assert len(self.get_log_match(
-            "alignak.objects.schedulingitem] "
+            "fusionsupervision.objects.schedulingitem] "
             "The freshness period of service 'test_host_F/%s'" % svc_description)) == count
 
         for idx in range(1, count+1):

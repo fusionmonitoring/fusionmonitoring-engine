@@ -1,58 +1,79 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2015-2018: Alignak team, see AUTHORS.txt file for contributors
+# Copyright (C) 2019-2019: FusionSupervision team, see AUTHORS.md file for contributors
 #
-# This file is part of Alignak.
+# This file is part of FusionSupervision engine.
 #
-# Alignak is free software: you can redistribute it and/or modify
+# FusionSupervision is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# Alignak is distributed in the hope that it will be useful,
+# FusionSupervision is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU Affero General Public License for more details.
 #
 # You should have received a copy of the GNU Affero General Public License
-# along with Alignak.  If not, see <http://www.gnu.org/licenses/>.
+# along with FusionSupervision engine.  If not, see <http://www.gnu.org/licenses/>.
 #
 #
 # This file incorporates work covered by the following copyright and
 # permission notice:
 #
-#  Copyright (C) 2009-2014:
-#     Hartmut Goebel, h.goebel@goebel-consult.de
-#     Grégory Starck, g.starck@gmail.macros_command
-#     Sebastien Coavoux, s.coavoux@free.fr
-#     Jean Gabes, naparuba@gmail.macros_command
-#     Zoran Zaric, zz@zoranzaric.de
-#     Gerhard Lausser, gerhard.lausser@consol.de
-
-#  This file is part of Shinken.
+#  Copyright (C) 2015-2018: Alignak team, see AUTHORS.alignak.txt file for contributors
 #
-#  Shinken is free software: you can redistribute it and/or modify
+#  This file is part of Alignak.
+#
+#  Alignak is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU Affero General Public License as published by
 #  the Free Software Foundation, either version 3 of the License, or
 #  (at your option) any later version.
 #
-#  Shinken is distributed in the hope that it will be useful,
+#  Alignak is distributed in the hope that it will be useful,
 #  but WITHOUT ANY WARRANTY; without even the implied warranty of
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #  GNU Affero General Public License for more details.
 #
 #  You should have received a copy of the GNU Affero General Public License
-#  along with Shinken.  If not, see <http://www.gnu.org/licenses/>.
+#  along with Alignak.  If not, see <http://www.gnu.org/licenses/>.
+#
+#
+#  This file incorporates work covered by the following copyright and
+#  permission notice:
+#
+#   Copyright (C) 2009-2014:
+#      Hartmut Goebel, h.goebel@goebel-consult.de
+#      Grégory Starck, g.starck@gmail.macros_command
+#      Sebastien Coavoux, s.coavoux@free.fr
+#      Jean Gabes, naparuba@gmail.macros_command
+#      Zoran Zaric, zz@zoranzaric.de
+#      Gerhard Lausser, gerhard.lausser@consol.de
+#
+#   This file is part of Shinken.
+#
+#   Shinken is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU Affero General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   Shinken is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU Affero General Public License for more details.
+#
+#   You should have received a copy of the GNU Affero General Public License
+#   along with Shinken.  If not, see <http://www.gnu.org/licenses/>.
 
 #
 # This file is used to test reading and processing of config files
 #
 
 import pytest
-from .alignak_test import *
-from alignak.macroresolver import MacroResolver
-from alignak.commandcall import CommandCall
+from .fusionsupervision_test import *
+from fusionsupervision.macroresolver import MacroResolver
+from fusionsupervision.commandcall import CommandCall
 
 
 class MacroResolverTester(object):
@@ -65,20 +86,20 @@ class MacroResolverTester(object):
         """Test a simple macro resolution
         :return:
         """
-        # These are macros built from a variable declare in alignak.ini file
+        # These are macros built from a variable declare in fusionsupervision.ini file
         # ; Some macros for the tests
-        # $alignak_test_macro=test macro
-        # _alignak_test_macro2=test macro 2
+        # $fusionsupervision_test_macro=test macro
+        # _fusionsupervision_test_macro2=test macro 2
         result = self.mr.resolve_simple_macros_in_string("$ALIGNAK_TEST_MACRO$", [], None, None, None)
         assert result == "test macro"
         result = self.mr.resolve_simple_macros_in_string("$ALIGNAK_TEST_MACRO2$", [], None, None, None)
         assert result == "test macro 2"
 
-        # These are macros read from a pack. section of the alignak.ini configuration
+        # These are macros read from a pack. section of the fusionsupervision.ini configuration
         result = self.mr.resolve_simple_macros_in_string("$SMTP_SERVER$", [], None, None, None)
         assert result == "your_smtp_server_address"
         result = self.mr.resolve_simple_macros_in_string("$MAIL_FROM$", [], None, None, None)
-        assert result == "alignak@monitoring"
+        assert result == "fusionsupervision@monitoring"
 
         # This is a macro built from a variable that is a string
         result = self.mr.resolve_simple_macros_in_string("$ALIGNAK$", [], None, None, None)
@@ -87,7 +108,7 @@ class MacroResolverTester(object):
         # This is a macro built from a variable that is a list of strings
         result = self.mr.resolve_simple_macros_in_string("$ALIGNAK_CONFIG$", [], None, None, None)
         assert isinstance(result, string_types)
-        expected = "[%s]" % ','.join(self.alignak_env.cfg_files)
+        expected = "[%s]" % ','.join(self.fusionsupervision_env.cfg_files)
         assert result == expected
 
         # This is a macro built from a dynamic variable
@@ -107,11 +128,11 @@ class MacroResolverTester(object):
         assert result == "/tmp"
         # Alignak variable interpolated from %(var) is available as a macro
         result = self.mr.resolve_simple_macros_in_string("$DIST_ETC$", [], None, None, None)
-        assert result == "/tmp/etc/alignak"
+        assert result == "/tmp/etc/fusionsupervision"
 
         # # Alignak "standard" variable is not available as a macro
         # # Empty value ! todo: Perharps should be changed ?
-        # Sometimes the user is defined to alignak for test purpose and it remans set to this value!
+        # Sometimes the user is defined to fusionsupervision for test purpose and it remans set to this value!
         # result = self.mr.resolve_simple_macros_in_string("$USER$", [], None, None, None)
         # assert result == ""
 
@@ -921,7 +942,7 @@ class MacroResolverTester(object):
         assert 'plugins/nothing 127.0.0.1' == macros_command
 
 
-class TestMacroResolverWithEnv(MacroResolverTester, AlignakTest):
+class TestMacroResolverWithEnv(MacroResolverTester, FusionsupervisionTest):
     """Test without enabled environment macros"""
 
     def setUp(self):
@@ -940,7 +961,7 @@ class TestMacroResolverWithEnv(MacroResolverTester, AlignakTest):
         assert self.mr.env_prefix == 'ALIGNAK_'
 
 
-class TestMacroResolverWithoutEnv(MacroResolverTester, AlignakTest):
+class TestMacroResolverWithoutEnv(MacroResolverTester, FusionsupervisionTest):
     """Test without enabled environment macros"""
 
     def setUp(self):

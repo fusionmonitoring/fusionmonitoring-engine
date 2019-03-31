@@ -1,25 +1,46 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2015-2018: Alignak contrib team, see AUTHORS.txt file for contributors
+# Copyright (C) 2019-2019: FusionSupervision team, see AUTHORS.md file for contributors
 #
-# This file is part of Alignak contrib projet.
+# This file is part of FusionSupervision engine.
 #
-# Alignak is free software: you can redistribute it and/or modify
+# FusionSupervision is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# Alignak is distributed in the hope that it will be useful,
+# FusionSupervision is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU Affero General Public License for more details.
 #
 # You should have received a copy of the GNU Affero General Public License
-# along with Alignak.  If not, see <http://www.gnu.org/licenses/>.
-"""
-This module is used to get configuration from alignak-backend with arbiter
-"""
+# along with FusionSupervision engine.  If not, see <http://www.gnu.org/licenses/>.
+#
+#
+# This file incorporates work covered by the following copyright and
+# permission notice:
+#
+#  Copyright (C) 2015-2018: Alignak contrib team, see AUTHORS.alignak.txt file for contributors
+#
+#  This file is part of Alignak contrib projet.
+#
+#  Alignak is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU Affero General Public License as published by
+#  the Free Software Foundation, either version 3 of the License, or
+#  (at your option) any later version.
+#
+#  Alignak is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU Affero General Public License for more details.
+#
+#  You should have received a copy of the GNU Affero General Public License
+#  along with Alignak.  If not, see <http://www.gnu.org/licenses/>.
 
+"""
+This module is used to get configuration from fusionsupervision-backend with arbiter
+"""
 
 import os
 import signal
@@ -28,15 +49,15 @@ import json
 import logging
 from datetime import datetime
 
-from alignak.basemodule import BaseModule
-from alignak.external_command import ExternalCommand
+from fusionsupervision.basemodule import BaseModule
+from fusionsupervision.external_command import ExternalCommand
 
-from alignak_backend_client.client import Backend, BackendException
+from fusionsupervision_backend_client.client import Backend, BackendException
 
 # Set the backend client library log to ERROR level
-logging.getLogger("alignak_backend_client.client").setLevel(logging.ERROR)
+logging.getLogger("fusionsupervision_backend_client.client").setLevel(logging.ERROR)
 
-logger = logging.getLogger('alignak.module')  # pylint: disable=invalid-name
+logger = logging.getLogger('fusionsupervision.module')  # pylint: disable=invalid-name
 
 # pylint: disable=C0103
 properties = {
@@ -61,7 +82,7 @@ def get_instance(mod_conf):
 
 class AlignakBackendArbiter(BaseModule):
     # pylint: disable=too-many-public-methods
-    """ This class is used to get configuration from alignak-backend
+    """ This class is used to get configuration from fusionsupervision-backend
     """
 
     def __init__(self, mod_conf):
@@ -77,7 +98,7 @@ class AlignakBackendArbiter(BaseModule):
 
         # pylint: disable=global-statement
         global logger
-        logger = logging.getLogger('alignak.module.%s' % self.alias)
+        logger = logging.getLogger('fusionsupervision.module.%s' % self.alias)
 
         logger.debug("inner properties: %s", self.__dict__)
         logger.debug("received configuration: %s", mod_conf.__dict__)
@@ -132,7 +153,7 @@ class AlignakBackendArbiter(BaseModule):
         self.default_service_check_command = None
         self.default_user = None
 
-        self.alignak_configuration = {}
+        self.fusionsupervision_configuration = {}
 
     # Common functions
     def do_loop_turn(self):
@@ -146,28 +167,28 @@ class AlignakBackendArbiter(BaseModule):
         """Hook in arbiter used on configuration parsing start. This is useful to get our arbiter
         object and its parameters.
 
-        :param arbiter: alignak.daemons.arbiterdaemon.Arbiter
+        :param arbiter: fusionsupervision.daemons.arbiterdaemon.Arbiter
         :type arbiter: object
         :return: None
         """
         self.my_arbiter = arbiter
 
-    def get_alignak_configuration(self):
-        """Get Alignak configuration from alignak-backend
+    def get_fusionsupervision_configuration(self):
+        """Get Alignak configuration from fusionsupervision-backend
 
         This function is an Arbiter hook called by the arbiter during its configuration loading.
 
-        :return: alignak configuration parameters
+        :return: fusionsupervision configuration parameters
         :rtype: dict
         """
-        self.alignak_configuration = {}
+        self.fusionsupervision_configuration = {}
 
         start_time = time.time()
         try:
             logger.info("Loading Alignak configuration...")
-            self.alignak_configuration = {
-                'name': 'my_alignak',
-                'alias': 'Test alignak configuration',
+            self.fusionsupervision_configuration = {
+                'name': 'my_fusionsupervision',
+                'alias': 'Test fusionsupervision configuration',
                 # Boolean fields
                 'notifications_enabled': True,
                 'flap_detection_enabled': False,
@@ -190,20 +211,20 @@ class AlignakBackendArbiter(BaseModule):
                            "Backend communication error.")
             logger.debug("Exception: %s", exp)
             self.backend_connected = False
-            return self.alignak_configuration
+            return self.fusionsupervision_configuration
 
         self.time_loaded_conf = datetime.utcnow().strftime("%a, %d %b %Y %H:%M:%S GMT")
 
         now = time.time()
         logger.info("Alignak configuration loaded in %s seconds", (now - start_time))
-        return self.alignak_configuration
+        return self.fusionsupervision_configuration
 
     def hook_tick(self, arbiter):
         # pylint: disable=too-many-nested-blocks
         """Hook in arbiter used to check if configuration has changed in the backend since
         last configuration loaded
 
-        :param arbiter: alignak.daemons.arbiterdaemon.Arbiter
+        :param arbiter: fusionsupervision.daemons.arbiterdaemon.Arbiter
         :type arbiter: object
         :return: None
         """

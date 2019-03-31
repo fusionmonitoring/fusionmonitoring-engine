@@ -1,30 +1,51 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2015-2018: Alignak team, see AUTHORS.txt file for contributors
+# Copyright (C) 2019-2019: FusionSupervision team, see AUTHORS.md file for contributors
 #
-# This file is part of Alignak.
+# This file is part of FusionSupervision engine.
 #
-# Alignak is free software: you can redistribute it and/or modify
+# FusionSupervision is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# Alignak is distributed in the hope that it will be useful,
+# FusionSupervision is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU Affero General Public License for more details.
 #
 # You should have received a copy of the GNU Affero General Public License
-# along with Alignak.  If not, see <http://www.gnu.org/licenses/>.
+# along with FusionSupervision engine.  If not, see <http://www.gnu.org/licenses/>.
+#
+#
+# This file incorporates work covered by the following copyright and
+# permission notice:
+#
+#  Copyright (C) 2015-2018: Alignak team, see AUTHORS.alignak.txt file for contributors
+#
+#  This file is part of Alignak.
+#
+#  Alignak is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU Affero General Public License as published by
+#  the Free Software Foundation, either version 3 of the License, or
+#  (at your option) any later version.
+#
+#  Alignak is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU Affero General Public License for more details.
+#
+#  You should have received a copy of the GNU Affero General Public License
+#  along with Alignak.  If not, see <http://www.gnu.org/licenses/>.
 
-from .alignak_test import AlignakTest
-from alignak.objects.arbiterlink import ArbiterLink
-from alignak.objects.schedulerlink import SchedulerLink
-from alignak.objects.brokerlink import BrokerLink
-from alignak.objects.reactionnerlink import ReactionnerLink
-from alignak.objects.receiverlink import ReceiverLink
-from alignak.objects.pollerlink import PollerLink
+from .fusionsupervision_test import FusionsupervisionTest
+from fusionsupervision.objects.arbiterlink import ArbiterLink
+from fusionsupervision.objects.schedulerlink import SchedulerLink
+from fusionsupervision.objects.brokerlink import BrokerLink
+from fusionsupervision.objects.reactionnerlink import ReactionnerLink
+from fusionsupervision.objects.receiverlink import ReceiverLink
+from fusionsupervision.objects.pollerlink import PollerLink
 
 
 class template_DaemonLink_get_name():
@@ -47,7 +68,7 @@ class template_DaemonLink_get_name():
             self.assertTrue(False, "get_name should not raise AttributeError")
 
 
-class Test_ArbiterLink_get_name(template_DaemonLink_get_name, AlignakTest):
+class Test_ArbiterLink_get_name(template_DaemonLink_get_name, FusionsupervisionTest):
     """Test satellite link arbiter"""
     def setUp(self):
         super(Test_ArbiterLink_get_name, self).setUp()
@@ -55,7 +76,7 @@ class Test_ArbiterLink_get_name(template_DaemonLink_get_name, AlignakTest):
     daemon_link = ArbiterLink
 
 
-class Test_SchedulerLink_get_name(template_DaemonLink_get_name, AlignakTest):
+class Test_SchedulerLink_get_name(template_DaemonLink_get_name, FusionsupervisionTest):
     """Test satellite link scheduler"""
     def setUp(self):
         super(Test_SchedulerLink_get_name, self).setUp()
@@ -63,7 +84,7 @@ class Test_SchedulerLink_get_name(template_DaemonLink_get_name, AlignakTest):
     daemon_link = SchedulerLink
 
 
-class Test_BrokerLink_get_name(template_DaemonLink_get_name, AlignakTest):
+class Test_BrokerLink_get_name(template_DaemonLink_get_name, FusionsupervisionTest):
     """Test satellite link broker"""
     def setUp(self):
         super(Test_BrokerLink_get_name, self).setUp()
@@ -71,7 +92,7 @@ class Test_BrokerLink_get_name(template_DaemonLink_get_name, AlignakTest):
     daemon_link = BrokerLink
 
 
-class Test_ReactionnerLink_get_name(template_DaemonLink_get_name, AlignakTest):
+class Test_ReactionnerLink_get_name(template_DaemonLink_get_name, FusionsupervisionTest):
     """Test satellite link reactionner"""
     def setUp(self):
         super(Test_ReactionnerLink_get_name, self).setUp()
@@ -79,7 +100,7 @@ class Test_ReactionnerLink_get_name(template_DaemonLink_get_name, AlignakTest):
     daemon_link = ReactionnerLink
 
 
-class Test_ReceiverLink_get_name(template_DaemonLink_get_name, AlignakTest):
+class Test_ReceiverLink_get_name(template_DaemonLink_get_name, FusionsupervisionTest):
     """Test satellite link receiver"""
     def setUp(self):
         super(Test_ReceiverLink_get_name, self).setUp()
@@ -87,7 +108,7 @@ class Test_ReceiverLink_get_name(template_DaemonLink_get_name, AlignakTest):
     daemon_link = ReceiverLink
 
 
-class Test_PollerLink_get_name(template_DaemonLink_get_name, AlignakTest):
+class Test_PollerLink_get_name(template_DaemonLink_get_name, FusionsupervisionTest):
     """Test satellite link poller"""
     def setUp(self):
         super(Test_PollerLink_get_name, self).setUp()

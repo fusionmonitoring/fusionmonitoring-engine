@@ -3,16 +3,16 @@
 # configuration used for the unit tests.
 # =================================================================================
 #
-# alignak.ini
+# fusionsupervision.ini
 # -------------
 # Defines a global Alignak configuration based on one instance of each Alignak daemons
 # the following items:
 #
-# alignak.d
+# fusionsupervision.d
 # -------------
-# Directory where all the ini files are appended to the alignak.ini file.
+# Directory where all the ini files are appended to the fusionsupervision.ini file.
 #
-# alignak.cfg
+# fusionsupervision.cfg
 # -------------
 # Nagios legacy files
 #

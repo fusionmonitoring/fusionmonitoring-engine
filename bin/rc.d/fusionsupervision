@@ -1,0 +1,443 @@
+#!/bin/sh
+
+# Configuration settings for an fusionsupervision-daemon instance in /etc/rc.conf:
+# $FreeBSD$
+#
+# PROVIDE: fusionsupervision
+# REQUIRE: LOGIN
+# KEYWORD: shutdown
+#
+# fusionsupervision_enable (bool):
+#   Default value: "NO"
+#   Flag that determines whether FusionSupervision engine is enabled.
+#
+# fusionsupervision_prefix (string):
+#   Default value: "/usr/local"
+#   FusionSupervision Engine default installation prefix
+#
+# fusionsupervision_user (string):
+#   Default value: "fusionsupervision"
+#   FusionSupervision Engine default user - if set an FUSIONSUPERVISION_USER environment variable will be defined
+#   Set a value to override the user configured in the FusionSupervision Engine configuration file
+#   If you are using the FreeBSD daemon, it will use this value to start the FusionSupervision Engine daemon
+#
+# fusionsupervision_group (string):
+#   Default value: "fusionsupervision"
+#   FusionSupervision Engine default user group - same as the user variable
+#
+# fusionsupervision_configuration (string):
+#   Default value: "/usr/local/share/fusionsupervision/etc/fusionsupervision.ini"
+#   FusionSupervision Engine configuration file name
+#
+# fusionsupervision_log_file (string):
+#   Default value: "/tmp/fusionsupervision.log"
+#   FusionSupervision Engine default log file name (used for configuration check reporting)
+#
+# fusionsupervision_pid_file (string):
+#   Default value: "/tmp/fusionsupervision.pid"
+#   FusionSupervision Engine default pid file name (used for configuration check reporting)
+#
+# fusionsupervision_daemonize (bool):
+#   Default value: "NO"
+#   Use the daemon FreeBSD utility to start the fusionsupervision daemons
+#
+# fusionsupervision_daemon (bool):
+#   Default value: "YES"
+#   Start in daemon mode - each deamon will fork itself to daemonize
+#
+# fusionsupervision_replace (bool):
+#   Default value: "YES"
+#   Start in replace mode - replaces an existing daemon if a stale pid file exists
+#
+# fusionsupervision_flags (string):
+#   Default value: ""
+#   Extra parameters to be provided to the started script
+#
+# fusionsupervision_fusionsupervision_name (string):
+#   Default value: ""
+#   FusionSupervision Engine instance name
+#   Default is empty to get this parameter in the configuration file
+#
+# fusionsupervision_host (string):
+#   Default value: ""
+#   Interface listened to by the FusionSupervision Engine arbiter.
+#   Default is empty to get this parameter in the configuration file
+#
+# fusionsupervision_port (integer):
+#   Default value:
+#   Port listened to by the FusionSupervision Engine arbiter.
+#   Default is empty to get this parameter in the configuration file
+#
+# -------------------------------------------------------------------------------------------------
+# FusionSupervision Engine rc.d script is able to operate on several FusionSupervision Engine daemons instances
+# Defining which daemons are to be started is made thanks to these configuration variables:
+#
+# fusionsupervision_types (string list):
+#   Defines the daemons types to be started
+#   Default is all the daemon types: arbiter scheduler poller broker receiver reactionner
+#
+# fusionsupervision_arbiter_instances (string list):
+#   Defines the daemon instances to be started
+#   Default is all only one master instance: arbiter-master
+#
+# fusionsupervision_scheduler_instances (string list):
+#   Defines the daemon instances to be started
+#   Default is all only one master instance: scheduler-master
+#
+# fusionsupervision_broker_instances (string list):
+#   Defines the daemon instances to be started
+#
+# fusionsupervision_poller_instances (string list):
+#   Defines the daemon instances to be started
+#   Default is all only one master instance: poller-master
+#
+# fusionsupervision_reactionner_instances (string list):
+#   Defines the daemon instances to be started
+#   Default is all only one master instance: reactionner-master
+#
+# fusionsupervision_receiver_instances (string list):
+#   Defines the daemon instances to be started
+#   Default is all only one master instance: receiver-master
+#
+# -------------------------------------------------------------------------------------------------
+# Defining a specific FusionSupervision Engine daemons configuration is quite easy:
+# 1- define the daemons instances list
+# fusionsupervision_types="scheduler broker receiver"
+# 2- define each daemon instance for each daemons type
+# fusionsupervision_scheduler_instances="scheduler-realm-1 scheduler-realm-2"
+# fusionsupervision_broker_instances="broker-realm-1"
+# fusionsupervision_receiver_instances="receiver-realm-1 receiver-realm-2"
+# 3- define each daemon instance specific parameters
+# fusionsupervision_scheduler_realm_1_flags="-n scheduler-realm-1 -p 10000"
+# fusionsupervision_scheduler_realm_2_flags="-n scheduler-realm-2 -p 10001"
+# fusionsupervision_broker_realm_1_flags="-n broker-realm-1 -p 10002"
+# fusionsupervision_broker_realm_2_flags="-n broker-realm-2 -p 10003"
+# fusionsupervision_receiver_realm_1_flags="-n receiver-realm-1 -p 10004"
+# fusionsupervision_receiver_realm_2_flags="-n receiver-realm-2 -p 10005"
+
+# -------------------------------------------------------------------------------------------------
+# The default configuration is to have one instance for each daemon type:
+# fusionsupervision_types="broker poller reactionner receiver scheduler arbiter"
+# fusionsupervision_arbiter_instances="arbiter-master"
+# fusionsupervision_scheduler_instances="scheduler-master"
+# fusionsupervision_broker_instances="broker-master"
+# fusionsupervision_poller_instances="poller-master"
+# fusionsupervision_reactionner_instances="reactionner-master"
+# fusionsupervision_receiver_instances="receiver-master"
+
+# Each daemon instance has its own specific port
+# fusionsupervision_arbiter_arbiter_master_port="7770"
+# fusionsupervision_scheduler_scheduler_master_port="7768"
+# fusionsupervision_broker_broker_master_port="7772"
+# fusionsupervision_poller_poller_master_port="7771"
+# fusionsupervision_reactionner_reactionner_master_port="7769"
+# fusionsupervision_receiver_receiver_master_port="7773"
+# -------------------------------------------------------------------------------------------------
+
+#
+# -------------------------------------------------------------------------------------------------
+# When types and instances are specified, the non-type specific parameters defined
+# previously (upper) become the default values for the type/instance specific parameters.
+#
+# Example:
+# If no specific "fusionsupervision_arbiter_arbiter_master_host" variable is defined then the default
+# "fusionsupervision_host" variable value will be used the the arbiter arbiter-master daemon host
+# variable.
+
+. /etc/rc.subr
+
+name="fusionsupervision"
+rcvar="fusionsupervision_enable"
+
+load_rc_config "${name}"
+
+# Script daemonize - use FreeBSD daemon utility
+: ${fusionsupervision_daemonize="NO"}
+
+# Daemons default parameters
+: ${fusionsupervision_enable="NO"}
+: ${fusionsupervision_user="fusionsupervision"}
+: ${fusionsupervision_group="fusionsupervision"}
+: ${fusionsupervision_prefix="/usr/local"}
+: ${fusionsupervision_log_file="/tmp/fusionsupervision.log"}
+: ${fusionsupervision_pid_file="/tmp/fusionsupervision.pid"}
+: ${fusionsupervision_configuration="/usr/local/share/fusionsupervision/etc/fusionsupervision.ini"}
+: ${fusionsupervision_daemon="YES"}
+: ${fusionsupervision_replace="YES"}
+: ${fusionsupervision_fusionsupervision_name=""}
+: ${fusionsupervision_host=""}
+: ${fusionsupervision_port=""}
+: ${fusionsupervision_flags=""}
+
+# Daemons types and instances
+# Default is to create one instance of each type
+# Instance names may not contain any specific character:
+# The script will remove space characters and replace non alphanumeric character with an underscore
+: ${fusionsupervision_types="broker poller reactionner receiver scheduler arbiter"}
+: ${fusionsupervision_arbiter_instances="arbiter-master"}
+: ${fusionsupervision_scheduler_instances="scheduler-master"}
+: ${fusionsupervision_broker_instances="broker-master"}
+: ${fusionsupervision_poller_instances="poller-master"}
+: ${fusionsupervision_reactionner_instances="reactionner-master"}
+: ${fusionsupervision_receiver_instances="receiver-master"}
+
+# Specific daemons instances configuration
+# Listening port
+: ${fusionsupervision_arbiter_arbiter_master_port="7770"}
+: ${fusionsupervision_scheduler_scheduler_master_port="7768"}
+: ${fusionsupervision_broker_broker_master_port="7772"}
+: ${fusionsupervision_poller_poller_master_port="7771"}
+: ${fusionsupervision_reactionner_reactionner_master_port="7769"}
+: ${fusionsupervision_receiver_receiver_master_port="7773"}
+
+
+# This handles daemons type/instance specific vars.
+if [ -n "$3" ]; then
+   # $1 is the command and $2 is the daemon type and $3 is the daemon name
+   if [ "$1" = "check" ]; then
+      echo "Start checking FusionSupervision Engine configuration..."
+   elif [ "$1" = "reload" ]; then
+      echo "Start reloading FusionSupervision Engine configuration..."
+   else
+      type="$2"
+      # Remove space characters and replace non alphanumeric with an underscore
+      instance=`echo "$3" | tr -d "[:space:]" | tr -c "[:alnum:]" "_"`
+      if [ -n "${fusionsupervision_types}" ]; then
+         fusionsupervision_name="$3"
+
+         pid_file="${fusionsupervision_prefix}/var/run/fusionsupervision/${type}-${instance}.pid"
+         eval tmp="fusionsupervision_${type}_${instance}_pid_file"
+         eval fusionsupervision_pid_file="\${$tmp:-${pid_file}}"
+
+         log_file="${fusionsupervision_prefix}/var/log/fusionsupervision/${type}-${instance}.log"
+         eval tmp="fusionsupervision_${type}_${instance}_log_file"
+         eval fusionsupervision_log_file="\${$tmp:-${log_file}}"
+
+         eval tmp="fusionsupervision_${type}_${instance}_enable"
+         eval fusionsupervision_enable="\${$tmp:-${fusionsupervision_enable}}"
+
+         eval tmp="fusionsupervision_${type}_${instance}_prefix"
+         eval fusionsupervision_prefix="\${$tmp:-${fusionsupervision_prefix}}"
+
+         eval tmp="fusionsupervision_${type}_${instance}_daemonize"
+         eval fusionsupervision_daemonize="\${$tmp:-${fusionsupervision_daemonize}}"
+
+         eval tmp="fusionsupervision_${type}_${instance}_daemon"
+         eval fusionsupervision_daemon="\${$tmp:-${fusionsupervision_daemon}}"
+
+         eval tmp="fusionsupervision_${type}_${instance}_replace"
+         eval fusionsupervision_replace="\${$tmp:-${fusionsupervision_replace}}"
+
+         eval tmp="fusionsupervision_${type}_${instance}_flags"
+         eval fusionsupervision_flags="\${$tmp:-${fusionsupervision_flags}}"
+
+         eval tmp="fusionsupervision_${type}_${instance}_host"
+         eval fusionsupervision_host="\${$tmp:-${fusionsupervision_host}}"
+
+         eval tmp="fusionsupervision_${type}_${instance}_port"
+         eval fusionsupervision_port="\${$tmp:-${fusionsupervision_port}}"
+      else
+         echo "$0: extra argument ignored"
+      fi
+   fi
+elif [ -n "$2" ]; then
+   # $1 is the command and $2 is the daemon type
+   if [ "$1" = "check" ]; then
+      echo "Start checking FusionSupervision Engine configuration..."
+   elif [ "$1" = "reload" ]; then
+      echo "Start reloading FusionSupervision Engine configuration..."
+   else
+      echo "Single instance command: $1 - $2"
+      if [ -n "${fusionsupervision_types}" -a -n "$1" ]; then
+         for type in ${fusionsupervision_types}; do
+            eval type_instances="\${fusionsupervision_${type}_instances:""}"
+            for instance in ${type_instances}; do
+               if [ "$instance" = "$2" ]; then
+                  /usr/local/etc/rc.d/fusionsupervision $1 ${type} ${instance}
+                  retcode="$?"
+                  if [ "0${retcode}" -ne 0 ]; then
+                     failed="${type} - ${instance} (${retcode}) ${failed:-}"
+                  else
+                     success="${type} - ${instance} ${success:-}"
+                  fi
+               fi
+            done
+         done
+         # It exits so that non-instance rc.d is not started when there are instances.
+         exit 0
+      fi
+   fi
+else
+   # $1 is the command
+   info "All instances command: $1"
+   echo "All instances command: $1"
+   if [ "$1" = "check" ]; then
+      debug "Require FusionSupervision Engine configuration checking..."
+   elif [ "$1" = "reload" ]; then
+      echo "Start reloading FusionSupervision Engine configuration..."
+      type="arbiter"
+      instance="arbiter_master"
+   elif [ -n "${fusionsupervision_types}" -a -n "$1" ]; then
+      for type in ${fusionsupervision_types}; do
+         eval type_instances="\${fusionsupervision_${type}_instances:""}"
+         for instance in ${type_instances}; do
+            info "=> instance: ${type} - ${instance}"
+            /usr/local/etc/rc.d/fusionsupervision $1 ${type} ${instance}
+            retcode="$?"
+            if [ "0${retcode}" -ne 0 ]; then
+               failed="${type} - ${instance} (${retcode}) ${failed:-}"
+            else
+               success="${type} - ${instance} ${success:-}"
+            fi
+         done
+      done
+      # It exits so that non-instance rc.d is not started when there are instances.
+      exit 0
+   fi
+fi
+
+command="/usr/local/bin/fusionsupervision-${type}"
+fusionsupervision_flags="--name ${fusionsupervision_name}"
+
+# Create daemon start parameters
+if checkyesno fusionsupervision_daemon; then
+   fusionsupervision_flags="${fusionsupervision_flags} --daemon"
+fi
+
+if checkyesno fusionsupervision_replace; then
+   fusionsupervision_flags="${fusionsupervision_flags} --replace"
+fi
+
+if [ ! -z "$fusionsupervision_fusionsupervision_name" ]; then
+   if [ "$type" = "arbiter" ]; then
+      fusionsupervision_flags="${fusionsupervision_flags} --fusionsupervision-name \"${fusionsupervision_fusionsupervision_name}\""
+   fi
+fi
+
+if [ ! -z "$fusionsupervision_host" ]; then
+   fusionsupervision_flags="${fusionsupervision_flags} --host ${fusionsupervision_host}"
+fi
+
+if [ ! -z "$fusionsupervision_port" ]; then
+   fusionsupervision_flags="${fusionsupervision_flags} --port ${fusionsupervision_port}"
+fi
+
+command_args="--environment ${fusionsupervision_configuration} --pid_file ${fusionsupervision_pid_file} --log_file ${fusionsupervision_log_file} ${fusionsupervision_flags}"
+
+debug " - enable: ${fusionsupervision_enable}"
+debug " - name: ${fusionsupervision_name}"
+debug " - prefix: ${fusionsupervision_prefix}"
+debug " - pid file: ${fusionsupervision_pid_file}"
+debug " - log file: ${fusionsupervision_log_file}"
+debug " - fusionsupervision name: ${fusionsupervision_fusionsupervision_name}"
+debug " - daemonize: ${fusionsupervision_daemonize}"
+debug " - user:group: ${fusionsupervision_user}:${fusionsupervision_group}"
+debug " - daemon: ${fusionsupervision_daemon}"
+debug " - replace: ${fusionsupervision_replace}"
+debug " - flags: ${fusionsupervision_flags}"
+debug " - host: ${fusionsupervision_host}"
+debug " - port: ${fusionsupervision_port}"
+debug " ---"
+debug " - daemon arguments: $command_args"
+
+stop_cmd="${name}_stop"
+start_cmd="${name}_start"
+status_cmd="${name}_status"
+start_precmd="${name}_precmd"
+reload_cmd="${name}_reload"
+check_cmd="${name}_check"
+extra_commands="reload check"
+
+# Force define the FusionSupervision Engine user:group in the environment to override the one defined in the configuration file!
+if [ ! -z "$fusionsupervision_user" ]; then
+   export FUSIONSUPERVISION_USER=${fusionsupervision_user}
+   export FUSIONSUPERVISION_GROUP=${fusionsupervision_group}
+   debug "Setting FusionSupervision Engine user in the environment: $FUSIONSUPERVISION_USER:$FUSIONSUPERVISION_GROUP"
+fi
+
+# If you get in trouble because of the stdout/stderr logging, you can set this environment variable
+# export FUSIONSUPERVISION_DO_NOT_PRESERVE_STDOUT=YES
+
+fusionsupervision_precmd()
+{
+   debug "Preparing directories..."
+   /usr/bin/install -d -o ${fusionsupervision_user} -g ${fusionsupervision_group} -m 755 ${fusionsupervision_prefix}/var/log/fusionsupervision
+   /usr/bin/install -d -o ${fusionsupervision_user} -g ${fusionsupervision_group} -m 755 ${fusionsupervision_prefix}/var/run/fusionsupervision
+}
+
+fusionsupervision_start()
+{
+   info "Starting ${name} - ${type} ${instance}..."
+   if checkyesno fusionsupervision_daemonize; then
+      # daemon:
+      # -c change to / working dir
+      # -f redirect standard i/o to /dev/null
+      debug "Launch: /usr/sbin/daemon -c -f -P ${fusionsupervision_pid_file} -r -u ${fusionsupervision_user} ${command} ${command_args}"
+      /usr/sbin/daemon -c -f -P ${fusionsupervision_pid_file} -r -u ${fusionsupervision_user} ${command} ${command_args}
+   else
+      debug "Launch: ${command} ${command_args}"
+      ${command} ${command_args}
+   fi
+   info "Started"
+}
+
+fusionsupervision_stop()
+{
+   if [ -e "${fusionsupervision_pid_file}" ]; then
+      info "Stopping ${name} - ${type} ${instance}, pid=(`cat ${fusionsupervision_pid_file}`)..."
+      kill -s TERM `cat ${fusionsupervision_pid_file}`
+      info "Stopped"
+   else
+      info "${name} - ${type} ${instance} is not running"
+   fi
+}
+
+fusionsupervision_status() {
+   if [ -e "${fusionsupervision_pid_file}" ]; then
+      info "${name} - ${type} ${instance} is running as pid `cat ${fusionsupervision_pid_file}`"
+      echo "${name} - ${type} ${instance} is running as pid `cat ${fusionsupervision_pid_file}`"
+   else
+      info "${name} - ${type} ${instance} is not running"
+      echo "${name} - ${type} ${instance} is not running"
+   fi
+}
+
+fusionsupervision_check() {
+   info "Checking FusionSupervision Engine configuration..."
+   debug "/usr/local/bin/fusionsupervision-arbiter -V --environment ${fusionsupervision_configuration} --pid_file ${fusionsupervision_pid_file} --log_file ${fusionsupervision_log_file} $*"
+   /usr/local/bin/fusionsupervision-arbiter -V --environment ${fusionsupervision_configuration} --pid_file ${fusionsupervision_pid_file} --log_file ${fusionsupervision_log_file} $*
+   exit_code=$?
+   info "Configuration checked, result: $exit_code"
+   cat ${fusionsupervision_log_file}
+
+   if [ $exit_code -eq 0 ]
+   then
+      info "-----"
+      info "The checked configuration did not raise any error."
+      info "-----"
+   else
+      info "*****"
+      echo "*****"
+      err $exit_code "Some errors were raised during the configuration check!"
+      info "*****"
+      echo "*****"
+   fi
+}
+
+fusionsupervision_reload() {
+   info "Reloading FusionSupervision Engine configuration..."
+
+   fusionsupervision_pid_file="${fusionsupervision_prefix}/var/run/fusionsupervision/${type}-${instance}.pid"
+   if [ -e "${fusionsupervision_pid_file}" ]; then
+      info "Asking configuration reload to ${name} - ${type} ${instance}i, pid=(`cat ${fusionsupervision_pid_file}`)..."
+      kill -s HUP `cat ${fusionsupervision_pid_file}`
+      info "Signal sent"
+   else
+      info "${name} - ${type} ${instance} is not running"
+   fi
+}
+
+[ -z "${fusionsupervision_enable}" ] && fusionsupervision_enable="NO"
+
+run_rc_command "$@"
+

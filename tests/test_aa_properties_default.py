@@ -1,57 +1,77 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2015-2018: Alignak team, see AUTHORS.txt file for contributors
+# Copyright (C) 2019-2019: FusionSupervision team, see AUTHORS.md file for contributors
 #
-# This file is part of Alignak.
+# This file is part of FusionSupervision engine.
 #
-# Alignak is free software: you can redistribute it and/or modify
+# FusionSupervision is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# Alignak is distributed in the hope that it will be useful,
+# FusionSupervision is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU Affero General Public License for more details.
 #
 # You should have received a copy of the GNU Affero General Public License
-# along with Alignak.  If not, see <http://www.gnu.org/licenses/>.
+# along with FusionSupervision engine.  If not, see <http://www.gnu.org/licenses/>.
 #
 #
 # This file incorporates work covered by the following copyright and
 # permission notice:
 #
-#  Copyright (C) 2012:
-#     Hartmut Goebel <h.goebel@crazy-compilers.com>
+#  Copyright (C) 2015-2018: Alignak team, see AUTHORS.alignak.txt file for contributors
 #
-
-#  This file is part of Shinken.
+#  This file is part of Alignak.
 #
-#  Shinken is free software: you can redistribute it and/or modify
+#  Alignak is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU Affero General Public License as published by
 #  the Free Software Foundation, either version 3 of the License, or
 #  (at your option) any later version.
 #
-#  Shinken is distributed in the hope that it will be useful,
+#  Alignak is distributed in the hope that it will be useful,
 #  but WITHOUT ANY WARRANTY; without even the implied warranty of
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #  GNU Affero General Public License for more details.
 #
 #  You should have received a copy of the GNU Affero General Public License
-#  along with Shinken.  If not, see <http://www.gnu.org/licenses/>.
+#  along with Alignak.  If not, see <http://www.gnu.org/licenses/>.
+#
+#
+#  This file incorporates work covered by the following copyright and
+#  permission notice:
+#
+#   Copyright (C) 2012:
+#      Hartmut Goebel <h.goebel@crazy-compilers.com>
+#
+#
+#   This file is part of Shinken.
+#
+#   Shinken is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU Affero General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   Shinken is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU Affero General Public License for more details.
+#
+#   You should have received a copy of the GNU Affero General Public License
+#   along with Shinken.  If not, see <http://www.gnu.org/licenses/>.
 
 """
 Test default values for item types.
 """
 
-
-from alignak.property import UnusedProp, NONE_OBJECT
+from fusionsupervision.property import UnusedProp, NONE_OBJECT
 import pytest
 
 # TODO: clean import *
-from .alignak_test import *
-from alignak.property import *
+from .fusionsupervision_test import *
+from fusionsupervision.property import *
 
 
 class PropertiesTester(object):
@@ -104,7 +124,7 @@ class PropertiesTester(object):
             assert name in prop_names, 'unknown property %r found' % name
 
 
-class TestConfig(PropertiesTester, AlignakTest):
+class TestConfig(PropertiesTester, FusionsupervisionTest):
 
     unused_props = [
         'log_file', 'object_cache_file', 'precached_object_file', 'resource_file',
@@ -153,7 +173,7 @@ class TestConfig(PropertiesTester, AlignakTest):
         # ('instance_name', ''),
         ('instance_id', ''),
         ('config_name', 'Main configuration'),
-        ('alignak_name', ''),
+        ('fusionsupervision_name', ''),
         ('config_base_dir', ''),
         # ('triggers_dir', ''),
         ('packs_dir', ''),
@@ -165,7 +185,7 @@ class TestConfig(PropertiesTester, AlignakTest):
         ('accept_passive_host_checks', True),
         ('enable_event_handlers', True),
         ('log_rotation_method', 'd'),
-        ('log_archive_path', '/usr/local/alignak/var/log/archives'),
+        ('log_archive_path', '/usr/local/fusionsupervision/var/log/archives'),
         ('check_external_commands', True),
         ('main_config_file', ''),
         ('config_files', []),
@@ -185,7 +205,7 @@ class TestConfig(PropertiesTester, AlignakTest):
         ('log_external_commands', True),
         ('log_passive_checks', False),
         ('log_active_checks', False),
-        ('log_alignak_checks', False),
+        ('log_fusionsupervision_checks', False),
         ('global_host_event_handler', ''),
         ('global_service_event_handler', ''),
         ('max_service_check_spread', 5),
@@ -264,7 +284,7 @@ class TestConfig(PropertiesTester, AlignakTest):
         ('launch_missing_daemons', False),
         ('daemons_arguments', ''),
         ('daemons_initial_port', 10000),
-        ('daemons_log_folder', '/usr/local/var/log/alignak'),
+        ('daemons_log_folder', '/usr/local/var/log/fusionsupervision'),
         ('daemons_check_period', 5),
         ('daemons_start_timeout', 1),
         ('daemons_dispatch_timeout', 5),
@@ -272,7 +292,7 @@ class TestConfig(PropertiesTester, AlignakTest):
         ('daemons_stop_timeout', 5),
         ('daemons_failure_kill', True),
 
-        ('alignak_env', []),
+        ('fusionsupervision_env', []),
 
         ('events_date_format', '%Y-%m-%d %H:%M:%S'),
         ('events_log_count', 100),
@@ -280,11 +300,11 @@ class TestConfig(PropertiesTester, AlignakTest):
 
     def setUp(self):
         super(TestConfig, self).setUp()
-        from alignak.objects.config import Config
+        from fusionsupervision.objects.config import Config
         self.item = Config()
 
 
-class TestCommand(PropertiesTester, AlignakTest):
+class TestCommand(PropertiesTester, FusionsupervisionTest):
 
     unused_props = []
 
@@ -305,13 +325,13 @@ class TestCommand(PropertiesTester, AlignakTest):
 
     def setUp(self):
         super(TestCommand, self).setUp()
-        from alignak.objects.command import Command
+        from fusionsupervision.objects.command import Command
         self.item = None
         self.item = Command(parsing=True)
         print(self.item.properties)
 
 
-class TestContactgroup(PropertiesTester, AlignakTest):
+class TestContactgroup(PropertiesTester, FusionsupervisionTest):
 
     unused_props = []
 
@@ -331,11 +351,11 @@ class TestContactgroup(PropertiesTester, AlignakTest):
 
     def setUp(self):
         super(TestContactgroup, self).setUp()
-        from alignak.objects.contactgroup import Contactgroup
+        from fusionsupervision.objects.contactgroup import Contactgroup
         self.item = Contactgroup(parsing=True)
 
 
-class TestContact(PropertiesTester, AlignakTest):
+class TestContact(PropertiesTester, FusionsupervisionTest):
 
     unused_props = []
 
@@ -378,11 +398,11 @@ class TestContact(PropertiesTester, AlignakTest):
 
     def setUp(self):
         super(TestContact, self).setUp()
-        from alignak.objects.contact import Contact
+        from fusionsupervision.objects.contact import Contact
         self.item = Contact(parsing=True)
 
 
-class TestEscalation(PropertiesTester, AlignakTest):
+class TestEscalation(PropertiesTester, FusionsupervisionTest):
 
     unused_props = []
 
@@ -407,11 +427,11 @@ class TestEscalation(PropertiesTester, AlignakTest):
 
     def setUp(self):
         super(TestEscalation, self).setUp()
-        from alignak.objects.escalation import Escalation
+        from fusionsupervision.objects.escalation import Escalation
         self.item = Escalation(parsing=True)
 
 
-class TestHostdependency(PropertiesTester, AlignakTest):
+class TestHostdependency(PropertiesTester, FusionsupervisionTest):
 
     unused_props = []
 
@@ -433,11 +453,11 @@ class TestHostdependency(PropertiesTester, AlignakTest):
 
     def setUp(self):
         super(TestHostdependency, self).setUp()
-        from alignak.objects.hostdependency import Hostdependency
+        from fusionsupervision.objects.hostdependency import Hostdependency
         self.item = Hostdependency(parsing=True)
 
 
-class TestHostescalation(PropertiesTester, AlignakTest):
+class TestHostescalation(PropertiesTester, FusionsupervisionTest):
 
     unused_props = []
 
@@ -462,11 +482,11 @@ class TestHostescalation(PropertiesTester, AlignakTest):
 
     def setUp(self):
         super(TestHostescalation, self).setUp()
-        from alignak.objects.hostescalation import Hostescalation
+        from fusionsupervision.objects.hostescalation import Hostescalation
         self.item = Hostescalation(parsing=True)
 
 
-class TestHostextinfo(PropertiesTester, AlignakTest):
+class TestHostextinfo(PropertiesTester, FusionsupervisionTest):
 
     unused_props = []
 
@@ -490,11 +510,11 @@ class TestHostextinfo(PropertiesTester, AlignakTest):
 
     def setUp(self):
         super(TestHostextinfo, self).setUp()
-        from alignak.objects.hostextinfo import HostExtInfo
+        from fusionsupervision.objects.hostextinfo import HostExtInfo
         self.item = HostExtInfo(parsing=True)
 
 
-class TestHostgroup(PropertiesTester, AlignakTest):
+class TestHostgroup(PropertiesTester, FusionsupervisionTest):
 
     unused_props = []
 
@@ -518,11 +538,11 @@ class TestHostgroup(PropertiesTester, AlignakTest):
 
     def setUp(self):
         super(TestHostgroup, self).setUp()
-        from alignak.objects.hostgroup import Hostgroup
+        from fusionsupervision.objects.hostgroup import Hostgroup
         self.item = Hostgroup(parsing=True)
 
 
-class TestHost(PropertiesTester, AlignakTest):
+class TestHost(PropertiesTester, FusionsupervisionTest):
 
     unused_props = []
 
@@ -613,11 +633,11 @@ class TestHost(PropertiesTester, AlignakTest):
 
     def setUp(self):
         super(TestHost, self).setUp()
-        from alignak.objects.host import Host
+        from fusionsupervision.objects.host import Host
         self.item = Host(parsing=True)
 
 
-class TestModule(PropertiesTester, AlignakTest):
+class TestModule(PropertiesTester, FusionsupervisionTest):
 
     unused_props = []
     # unused_props = ['option_1', 'option_2', 'option_3']
@@ -638,13 +658,13 @@ class TestModule(PropertiesTester, AlignakTest):
         ('log_level', 'INFO'),
         ('statsd_host', 'localhost'),
         ('statsd_port', 8125),
-        ('statsd_prefix', 'alignak'),
+        ('statsd_prefix', 'fusionsupervision'),
         ('statsd_enabled', False)
     ])
 
     def setUp(self):
         super(TestModule, self).setUp()
-        from alignak.objects.module import Module
+        from fusionsupervision.objects.module import Module
 
         self.item = Module(parsing=True)
         print("Item properties:")
@@ -652,7 +672,7 @@ class TestModule(PropertiesTester, AlignakTest):
             print(("- %s" % name))
 
 
-class TestNotificationWay(PropertiesTester, AlignakTest):
+class TestNotificationWay(PropertiesTester, FusionsupervisionTest):
 
     unused_props = []
 
@@ -678,11 +698,11 @@ class TestNotificationWay(PropertiesTester, AlignakTest):
 
     def setUp(self):
         super(TestNotificationWay, self).setUp()
-        from alignak.objects.notificationway import NotificationWay
+        from fusionsupervision.objects.notificationway import NotificationWay
         self.item = NotificationWay(parsing=True)
 
 
-class TestRealm(PropertiesTester, AlignakTest):
+class TestRealm(PropertiesTester, FusionsupervisionTest):
 
     unused_props = []
 
@@ -705,11 +725,11 @@ class TestRealm(PropertiesTester, AlignakTest):
 
     def setUp(self):
         super(TestRealm, self).setUp()
-        from alignak.objects.realm import Realm
+        from fusionsupervision.objects.realm import Realm
         self.item = Realm(parsing=True)
 
 
-class TestResultmodulation(PropertiesTester, AlignakTest):
+class TestResultmodulation(PropertiesTester, FusionsupervisionTest):
 
     unused_props = []
 
@@ -728,11 +748,11 @@ class TestResultmodulation(PropertiesTester, AlignakTest):
 
     def setUp(self):
         super(TestResultmodulation, self).setUp()
-        from alignak.objects.resultmodulation import Resultmodulation
+        from fusionsupervision.objects.resultmodulation import Resultmodulation
         self.item = Resultmodulation(parsing=True)
 
 
-class TestServicedependency(PropertiesTester, AlignakTest):
+class TestServicedependency(PropertiesTester, FusionsupervisionTest):
 
     unused_props = []
 
@@ -755,11 +775,11 @@ class TestServicedependency(PropertiesTester, AlignakTest):
 
     def setUp(self):
         super(TestServicedependency, self).setUp()
-        from alignak.objects.servicedependency import Servicedependency
+        from fusionsupervision.objects.servicedependency import Servicedependency
         self.item = Servicedependency(parsing=True)
 
 
-class TestServiceescalation(PropertiesTester, AlignakTest):
+class TestServiceescalation(PropertiesTester, FusionsupervisionTest):
 
     unused_props = []
 
@@ -784,11 +804,11 @@ class TestServiceescalation(PropertiesTester, AlignakTest):
 
     def setUp(self):
         super(TestServiceescalation, self).setUp()
-        from alignak.objects.serviceescalation import Serviceescalation
+        from fusionsupervision.objects.serviceescalation import Serviceescalation
         self.item = Serviceescalation(parsing=True)
 
 
-class TestServiceextinfo(PropertiesTester, AlignakTest):
+class TestServiceextinfo(PropertiesTester, FusionsupervisionTest):
 
     unused_props = []
 
@@ -808,11 +828,11 @@ class TestServiceextinfo(PropertiesTester, AlignakTest):
 
     def setUp(self):
         super(TestServiceextinfo, self).setUp()
-        from alignak.objects.serviceextinfo import ServiceExtInfo
+        from fusionsupervision.objects.serviceextinfo import ServiceExtInfo
         self.item = ServiceExtInfo(parsing=True)
 
 
-class TestServicegroup(PropertiesTester, AlignakTest):
+class TestServicegroup(PropertiesTester, FusionsupervisionTest):
 
     unused_props = []
 
@@ -835,11 +855,11 @@ class TestServicegroup(PropertiesTester, AlignakTest):
 
     def setUp(self):
         super(TestServicegroup, self).setUp()
-        from alignak.objects.servicegroup import Servicegroup
+        from fusionsupervision.objects.servicegroup import Servicegroup
         self.item = Servicegroup(parsing=True)
 
 
-class TestService(PropertiesTester, AlignakTest):
+class TestService(PropertiesTester, FusionsupervisionTest):
 
     unused_props = []
 
@@ -930,11 +950,11 @@ class TestService(PropertiesTester, AlignakTest):
 
     def setUp(self):
         super(TestService, self).setUp()
-        from alignak.objects.service import Service
+        from fusionsupervision.objects.service import Service
         self.item = Service(parsing=True)
 
 
-class TestTimeperiod(PropertiesTester, AlignakTest):
+class TestTimeperiod(PropertiesTester, FusionsupervisionTest):
 
     unused_props = []
 
@@ -957,5 +977,5 @@ class TestTimeperiod(PropertiesTester, AlignakTest):
 
     def setUp(self):
         super(TestTimeperiod, self).setUp()
-        from alignak.objects.timeperiod import Timeperiod
+        from fusionsupervision.objects.timeperiod import Timeperiod
         self.item = Timeperiod(parsing=True)

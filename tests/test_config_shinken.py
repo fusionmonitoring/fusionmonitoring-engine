@@ -1,36 +1,59 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2015-2018: Alignak team, see AUTHORS.txt file for contributors
+# Copyright (C) 2019-2019: FusionSupervision team, see AUTHORS.md file for contributors
 #
-# This file is part of Alignak.
+# This file is part of FusionSupervision engine.
 #
-# Alignak is free software: you can redistribute it and/or modify
+# FusionSupervision is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# Alignak is distributed in the hope that it will be useful,
+# FusionSupervision is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU Affero General Public License for more details.
 #
 # You should have received a copy of the GNU Affero General Public License
-# along with Alignak.  If not, see <http://www.gnu.org/licenses/>.
+# along with FusionSupervision engine.  If not, see <http://www.gnu.org/licenses/>.
 #
 #
+# This file incorporates work covered by the following copyright and
+# permission notice:
+#
+#  Copyright (C) 2015-2018: Alignak team, see AUTHORS.alignak.txt file for contributors
+#
+#  This file is part of Alignak.
+#
+#  Alignak is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU Affero General Public License as published by
+#  the Free Software Foundation, either version 3 of the License, or
+#  (at your option) any later version.
+#
+#  Alignak is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU Affero General Public License for more details.
+#
+#  You should have received a copy of the GNU Affero General Public License
+#  along with Alignak.  If not, see <http://www.gnu.org/licenses/>.
+#
+#
+
 """
 This file contains the test for the Alignak configuration checks
 """
+
 import os
 import re
 import time
 import unittest2
-from .alignak_test import AlignakTest
+from .fusionsupervision_test import FusionsupervisionTest
 import pytest
 
 
-class TestConfigShinken(AlignakTest):
+class TestConfigShinken(FusionsupervisionTest):
     """
     This class tests the configuration
     """
@@ -57,7 +80,7 @@ class TestConfigShinken(AlignakTest):
         # l = [
         #     u"Some hosts exist in the realm 'France' but no broker is defined for this realm",
         #     u"Added a broker (broker-France, http://127.0.0.1:7772/) for the realm 'France'",
-        #     u'Host graphite use/inherit from an unknown template: graphite ! from: /home/alignak/alignak/test/cfg/_shinken/hosts/graphite.cfg:1'
+        #     u'Host graphite use/inherit from an unknown template: graphite ! from: /home/fusionsupervision/fusionsupervision/test/cfg/_shinken/hosts/graphite.cfg:1'
         # ]
         self.assert_any_cfg_log_match(
             "Host graphite use/inherit from an unknown template: graphite ! "

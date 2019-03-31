@@ -1,22 +1,43 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2015-2018: Alignak team, see AUTHORS.txt file for contributors
+# Copyright (C) 2019-2019: FusionSupervision team, see AUTHORS.md file for contributors
 #
-# This file is part of Alignak.
+# This file is part of FusionSupervision engine.
 #
-# Alignak is free software: you can redistribute it and/or modify
+# FusionSupervision is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# Alignak is distributed in the hope that it will be useful,
+# FusionSupervision is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU Affero General Public License for more details.
 #
 # You should have received a copy of the GNU Affero General Public License
-# along with Alignak.  If not, see <http://www.gnu.org/licenses/>.
+# along with FusionSupervision engine.  If not, see <http://www.gnu.org/licenses/>.
+#
+#
+# This file incorporates work covered by the following copyright and
+# permission notice:
+#
+#  Copyright (C) 2015-2018: Alignak team, see AUTHORS.alignak.txt file for contributors
+#
+#  This file is part of Alignak.
+#
+#  Alignak is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU Affero General Public License as published by
+#  the Free Software Foundation, either version 3 of the License, or
+#  (at your option) any later version.
+#
+#  Alignak is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU Affero General Public License for more details.
+#
+#  You should have received a copy of the GNU Affero General Public License
+#  along with Alignak.  If not, see <http://www.gnu.org/licenses/>.
 #
 #
 
@@ -26,12 +47,12 @@ This file test all cases of eventhandler
 
 import time
 
-from alignak.objects import Service
-from alignak.objects import Servicegroup
-from .alignak_test import AlignakTest
+from fusionsupervision.objects import Service
+from fusionsupervision.objects import Servicegroup
+from .fusionsupervision_test import FusionsupervisionTest
 
 
-class TestServiceGroup(AlignakTest):
+class TestServiceGroup(FusionsupervisionTest):
     """
     This class tests the servicegroups
     """
@@ -54,7 +75,7 @@ class TestServiceGroup(AlignakTest):
         Default configuration has no loading problems ... as of it servicegroups are parsed correctly
         :return: None
         """
-        self.setup_with_file('cfg/servicegroup/alignak_groups_with_no_alias.cfg')
+        self.setup_with_file('cfg/servicegroup/fusionsupervision_groups_with_no_alias.cfg')
         assert self.conf_is_correct
 
         #  Found a servicegroup named NOALIAS
@@ -68,7 +89,7 @@ class TestServiceGroup(AlignakTest):
 
         :return: None
         """
-        self.setup_with_file('cfg/servicegroup/alignak_servicegroup_members.cfg')
+        self.setup_with_file('cfg/servicegroup/fusionsupervision_servicegroup_members.cfg')
         assert self.conf_is_correct
 
         #  Found a servicegroup named allhosts_and_groups
@@ -88,7 +109,7 @@ class TestServiceGroup(AlignakTest):
 
         :return: None
         """
-        self.setup_with_file('cfg/servicegroup/alignak_servicegroup_members.cfg')
+        self.setup_with_file('cfg/servicegroup/fusionsupervision_servicegroup_members.cfg')
         assert self.conf_is_correct
 
         #  Found a servicegroup named allhosts_and_groups
@@ -128,7 +149,7 @@ class TestServiceGroup(AlignakTest):
 
         :return: None
         """
-        self.setup_with_file('cfg/servicegroup/alignak_servicegroup_no_service.cfg')
+        self.setup_with_file('cfg/servicegroup/fusionsupervision_servicegroup_no_service.cfg')
         assert self.conf_is_correct
 
         # Found a servicegroup named void
@@ -154,7 +175,7 @@ class TestServiceGroup(AlignakTest):
         assert self.conf_is_correct
         self.nb_servicegroups = len(self._scheduler.servicegroups)
 
-        self.setup_with_file('cfg/servicegroup/alignak_servicegroup_with_space.cfg')
+        self.setup_with_file('cfg/servicegroup/fusionsupervision_servicegroup_with_space.cfg')
         assert self.conf_is_correct
 
         # Two more groups than the default configuration
@@ -179,7 +200,7 @@ class TestServiceGroup(AlignakTest):
 
         :return: None
         """
-        self.setup_with_file('cfg/servicegroup/alignak_servicegroups_generated.cfg')
+        self.setup_with_file('cfg/servicegroup/fusionsupervision_servicegroups_generated.cfg')
         assert self.conf_is_correct
         self.nb_servicegroups = len(self._scheduler.servicegroups)
 

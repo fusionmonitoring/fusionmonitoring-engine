@@ -23,7 +23,7 @@ ignore-paths:
   - test_load
   - test_run
 ignore-patterns:
-# This file is only defining the imported Alignak version
-  - alignak/__init__.py
+# This file is only defining the imported FusionSupervision version
+  - fusionsupervision/__init__.py
 # This file is necessary because imported by daemons but it does not use imported packages...
-  - alignak/objects/__init__.py
+  - fusionsupervision/objects/__init__.py

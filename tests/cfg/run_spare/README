@@ -1,5 +1,5 @@
 # This configuration is built as such:
-# - the 6 standard alignak daemons
+# - the 6 standard fusionsupervision daemons
 # - a localhost host that is checked with _internal host check and that has no services
 # - this host is in the only existing realm (All)
 # - this host has 5 services that each run the script ./dummy_command.sh

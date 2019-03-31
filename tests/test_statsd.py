@@ -1,22 +1,43 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2015-2018: Alignak team, see AUTHORS.txt file for contributors
+# Copyright (C) 2019-2019: FusionSupervision team, see AUTHORS.md file for contributors
 #
-# This file is part of Alignak.
+# This file is part of FusionSupervision engine.
 #
-# Alignak is free software: you can redistribute it and/or modify
+# FusionSupervision is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# Alignak is distributed in the hope that it will be useful,
+# FusionSupervision is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU Affero General Public License for more details.
 #
 # You should have received a copy of the GNU Affero General Public License
-# along with Alignak.  If not, see <http://www.gnu.org/licenses/>.
+# along with FusionSupervision engine.  If not, see <http://www.gnu.org/licenses/>.
+#
+#
+# This file incorporates work covered by the following copyright and
+# permission notice:
+#
+#  Copyright (C) 2015-2018: Alignak team, see AUTHORS.alignak.txt file for contributors
+#
+#  This file is part of Alignak.
+#
+#  Alignak is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU Affero General Public License as published by
+#  the Free Software Foundation, either version 3 of the License, or
+#  (at your option) any later version.
+#
+#  Alignak is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU Affero General Public License for more details.
+#
+#  You should have received a copy of the GNU Affero General Public License
+#  along with Alignak.  If not, see <http://www.gnu.org/licenses/>.
 #
 #
 
@@ -29,11 +50,11 @@ import socket
 import threading
 import logging
 
-from alignak.brok import Brok
+from fusionsupervision.brok import Brok
 
-from alignak.stats import *
+from fusionsupervision.stats import *
 
-from .alignak_test import AlignakTest
+from .fusionsupervision_test import FusionsupervisionTest
 
 
 class FakeStatsdServer(threading.Thread):
@@ -118,7 +139,7 @@ class FakeCarbonServer(threading.Thread):
         sock.close()
 
 
-class TestStatsD(AlignakTest):
+class TestStatsD(FusionsupervisionTest):
     """
     This class test the StatsD interface
     """
@@ -152,7 +173,7 @@ class TestStatsD(AlignakTest):
         # Register stats manager as disabled
         assert not self.statsmgr.register('arbiter-master', 'arbiter',
                                           statsd_host='localhost', statsd_port=8125,
-                                          statsd_prefix='alignak', statsd_enabled=False)
+                                          statsd_prefix='fusionsupervision', statsd_enabled=False)
         assert self.statsmgr.statsd_enabled is False
         assert self.statsmgr.broks_enabled is False
         assert self.statsmgr.statsd_sock is None
@@ -164,7 +185,7 @@ class TestStatsD(AlignakTest):
         # Register stats manager as disabled
         assert not self.statsmgr.register('arbiter-master', 'arbiter',
                                           statsd_host='localhost', statsd_port=8125,
-                                          statsd_prefix='alignak', statsd_enabled=False,
+                                          statsd_prefix='fusionsupervision', statsd_enabled=False,
                                           broks_enabled=True)
         assert self.statsmgr.statsd_enabled is False
         assert self.statsmgr.broks_enabled is True
@@ -180,7 +201,7 @@ class TestStatsD(AlignakTest):
         assert self.statsmgr.statsd_addr is None
         assert self.statsmgr.register('arbiter-master', 'arbiter',
                                           statsd_host='localhost', statsd_port=8125,
-                                          statsd_prefix='alignak', statsd_enabled=True)
+                                          statsd_prefix='fusionsupervision', statsd_enabled=True)
         assert self.statsmgr.statsd_enabled is True
         assert self.statsmgr.broks_enabled is False
         assert self.statsmgr.statsd_sock is not None
@@ -188,7 +209,7 @@ class TestStatsD(AlignakTest):
 
         index = 0
         self.assert_log_match(re.escape(
-            'Sending arbiter-master statistics to: localhost:8125, prefix: alignak'
+            'Sending arbiter-master statistics to: localhost:8125, prefix: fusionsupervision'
         ), index)
         index += 1
         self.assert_log_match(re.escape(
@@ -209,7 +230,7 @@ class TestStatsD(AlignakTest):
         assert self.statsmgr.statsd_addr is None
         assert self.statsmgr.register('arbiter-master', 'arbiter',
                                       statsd_host='localhost', statsd_port=8125,
-                                      statsd_prefix='alignak', statsd_enabled=True,
+                                      statsd_prefix='fusionsupervision', statsd_enabled=True,
                                       broks_enabled=True)
         assert self.statsmgr.statsd_enabled is True
         assert self.statsmgr.broks_enabled is True
@@ -218,7 +239,7 @@ class TestStatsD(AlignakTest):
 
         index = 0
         self.assert_log_match(re.escape(
-            'Sending arbiter-master statistics to: localhost:8125, prefix: alignak'
+            'Sending arbiter-master statistics to: localhost:8125, prefix: fusionsupervision'
         ), index)
         index += 1
         self.assert_log_match(re.escape(
@@ -237,7 +258,7 @@ class TestStatsD(AlignakTest):
         # Register stats manager as disabled
         assert not self.statsmgr.register('arbiter-master', 'arbiter',
                                            statsd_host='localhost', statsd_port=8125,
-                                           statsd_prefix='alignak', statsd_enabled=False)
+                                           statsd_prefix='fusionsupervision', statsd_enabled=False)
 
         # Connect to StatsD server
         assert self.statsmgr.statsd_sock is None
@@ -255,10 +276,10 @@ class TestStatsD(AlignakTest):
         # Register stats manager as enabled (another port than the default one)
         assert self.statsmgr.register('arbiter-master', 'arbiter',
                                           statsd_host='localhost', statsd_port=8888,
-                                          statsd_prefix='alignak', statsd_enabled=True)
+                                          statsd_prefix='fusionsupervision', statsd_enabled=True)
         index = 0
         self.assert_log_match(re.escape(
-            'Sending arbiter-master statistics to: localhost:8888, prefix: alignak'
+            'Sending arbiter-master statistics to: localhost:8888, prefix: fusionsupervision'
         ), index)
         index += 1
         self.assert_log_match(re.escape(
@@ -284,7 +305,7 @@ class TestStatsD(AlignakTest):
         # Register stats manager as enabled
         self.statsmgr.register('arbiter-master', 'arbiter',
                                statsd_host='localhost', statsd_port=8125,
-                               statsd_prefix='alignak', statsd_enabled=True,
+                               statsd_prefix='fusionsupervision', statsd_enabled=True,
                                broks_enabled=True)
         index = 0
         # # Only for Python > 2.7, DEBUG logs ...
@@ -292,7 +313,7 @@ class TestStatsD(AlignakTest):
         #     index = 1
         self.show_logs()
         self.assert_log_match(re.escape(
-            'Sending arbiter-master statistics to: localhost:8125, prefix: alignak'
+            'Sending arbiter-master statistics to: localhost:8125, prefix: fusionsupervision'
         ), index)
         index += 1
         self.assert_log_match(re.escape(
@@ -316,7 +337,7 @@ class TestStatsD(AlignakTest):
         # Get min, max, count and sum
         assert self.statsmgr.stats['test'] == (0, 0, 1, 0)
         # self.assert_log_match(re.escape(
-        #     'Sending data: alignak.arbiter-master.test:0|ms'
+        #     'Sending data: fusionsupervision.arbiter-master.test:0|ms'
         # ), 3)
         # Prepare brok and remove specific brok properties (for test purpose only...
         brok.prepare()
@@ -325,10 +346,10 @@ class TestStatsD(AlignakTest):
         brok.__dict__.pop('prepared')
         brok.__dict__.pop('uuid')
         brok.__dict__['data'].pop('ts')
-        assert brok.__dict__ == {'type': 'alignak_stat',
+        assert brok.__dict__ == {'type': 'fusionsupervision_stat',
                                  'data': {
                                      'type': 'timer',
-                                     'metric': 'alignak.arbiter-master.test',
+                                     'metric': 'fusionsupervision.arbiter-master.test',
                                      'value': 0, 'uom': 'ms'
                                  }}
 
@@ -338,7 +359,7 @@ class TestStatsD(AlignakTest):
         # Get min, max, count (incremented) and sum
         assert self.statsmgr.stats['test'] == (0, 1, 2, 1)
         # self.assert_log_match(re.escape(
-        #     'Sending data: alignak.arbiter-master.test:1000|ms'
+        #     'Sending data: fusionsupervision.arbiter-master.test:1000|ms'
         # ), 4)
         # Prepare brok and remove specific brok properties (for test purpose only...
         brok.prepare()
@@ -347,10 +368,10 @@ class TestStatsD(AlignakTest):
         brok.__dict__.pop('prepared')
         brok.__dict__.pop('uuid')
         brok.__dict__['data'].pop('ts')
-        assert brok.__dict__ == {'type': 'alignak_stat',
+        assert brok.__dict__ == {'type': 'fusionsupervision_stat',
                                  'data': {
                                      'type': 'timer',
-                                     'metric': 'alignak.arbiter-master.test',
+                                     'metric': 'fusionsupervision.arbiter-master.test',
                                      'value': 1000, 'uom': 'ms'
                                  }}
 
@@ -360,7 +381,7 @@ class TestStatsD(AlignakTest):
         # Get min, max, count (incremented) and sum (increased)
         assert self.statsmgr.stats['test'] == (0, 12, 3, 13)
         # self.assert_log_match(re.escape(
-        #     'Sending data: alignak.arbiter-master.test:1000|ms'
+        #     'Sending data: fusionsupervision.arbiter-master.test:1000|ms'
         # ), 5)
         # Prepare brok and remove specific brok properties (for test purpose only...
         brok.prepare()
@@ -369,10 +390,10 @@ class TestStatsD(AlignakTest):
         brok.__dict__.pop('prepared')
         brok.__dict__.pop('uuid')
         brok.__dict__['data'].pop('ts')
-        assert brok.__dict__ == {'type': 'alignak_stat',
+        assert brok.__dict__ == {'type': 'fusionsupervision_stat',
                                  'data': {
                                      'type': 'timer',
-                                     'metric': 'alignak.arbiter-master.test',
+                                     'metric': 'fusionsupervision.arbiter-master.test',
                                      'value': 12000, 'uom': 'ms'
                                  }}
 
@@ -383,7 +404,7 @@ class TestStatsD(AlignakTest):
         # Register stats manager as enabled
         self.statsmgr.register('broker-master', 'broker',
                                statsd_host='localhost', statsd_port=8125,
-                               statsd_prefix='alignak', statsd_enabled=True,
+                               statsd_prefix='fusionsupervision', statsd_enabled=True,
                                broks_enabled=True)
         index = 0
         # # Only for Python > 2.7, DEBUG logs ...
@@ -391,7 +412,7 @@ class TestStatsD(AlignakTest):
         #     index = 1
         self.show_logs()
         self.assert_log_match(re.escape(
-            'Sending broker-master statistics to: localhost:8125, prefix: alignak'
+            'Sending broker-master statistics to: localhost:8125, prefix: fusionsupervision'
         ), index)
         index += 1
         self.assert_log_match(re.escape(
@@ -415,7 +436,7 @@ class TestStatsD(AlignakTest):
         # Get min, max, count and sum
         assert self.statsmgr.stats['test'] == (0, 0, 1, 0)
         # self.assert_log_match(re.escape(
-        #     'Sending data: alignak.arbiter-master.test:0|ms'
+        #     'Sending data: fusionsupervision.arbiter-master.test:0|ms'
         # ), 3)
         # Prepare brok and remove specific brok properties (for test purpose only...
         brok.prepare()
@@ -424,10 +445,10 @@ class TestStatsD(AlignakTest):
         brok.__dict__.pop('prepared')
         brok.__dict__.pop('uuid')
         brok.__dict__['data'].pop('ts')
-        assert brok.__dict__ == {'type': 'alignak_stat',
+        assert brok.__dict__ == {'type': 'fusionsupervision_stat',
                                  'data': {
                                      'type': 'counter',
-                                     'metric': 'alignak.broker-master.test',
+                                     'metric': 'fusionsupervision.broker-master.test',
                                      'value': 0, 'uom': 'c'
                                  }}
 
@@ -437,7 +458,7 @@ class TestStatsD(AlignakTest):
         # Get min, max, count (incremented) and sum
         assert self.statsmgr.stats['test'] == (0, 1, 2, 1)
         # self.assert_log_match(re.escape(
-        #     'Sending data: alignak.arbiter-master.test:1000|ms'
+        #     'Sending data: fusionsupervision.arbiter-master.test:1000|ms'
         # ), 4)
         # Prepare brok and remove specific brok properties (for test purpose only...
         brok.prepare()
@@ -446,10 +467,10 @@ class TestStatsD(AlignakTest):
         brok.__dict__.pop('prepared')
         brok.__dict__.pop('uuid')
         brok.__dict__['data'].pop('ts')
-        assert brok.__dict__ == {'type': 'alignak_stat',
+        assert brok.__dict__ == {'type': 'fusionsupervision_stat',
                                  'data': {
                                      'type': 'counter',
-                                     'metric': 'alignak.broker-master.test',
+                                     'metric': 'fusionsupervision.broker-master.test',
                                      'value': 1, 'uom': 'c'
                                  }}
 
@@ -459,7 +480,7 @@ class TestStatsD(AlignakTest):
         # Get min, max, count (incremented) and sum (increased)
         assert self.statsmgr.stats['test'] == (0, 12, 3, 13)
         # self.assert_log_match(re.escape(
-        #     'Sending data: alignak.arbiter-master.test:1000|ms'
+        #     'Sending data: fusionsupervision.arbiter-master.test:1000|ms'
         # ), 5)
         # Prepare brok and remove specific brok properties (for test purpose only...
         brok.prepare()
@@ -468,10 +489,10 @@ class TestStatsD(AlignakTest):
         brok.__dict__.pop('prepared')
         brok.__dict__.pop('uuid')
         brok.__dict__['data'].pop('ts')
-        assert brok.__dict__ == {'type': 'alignak_stat',
+        assert brok.__dict__ == {'type': 'fusionsupervision_stat',
                                  'data': {
                                      'type': 'counter',
-                                     'metric': 'alignak.broker-master.test',
+                                     'metric': 'fusionsupervision.broker-master.test',
                                      'value': 12, 'uom': 'c'
                                  }}
 
@@ -482,7 +503,7 @@ class TestStatsD(AlignakTest):
         # Register stats manager as enabled
         self.statsmgr.register('arbiter-master', 'arbiter',
                                statsd_host='localhost', statsd_port=8125,
-                               statsd_prefix='alignak', statsd_enabled=True,
+                               statsd_prefix='fusionsupervision', statsd_enabled=True,
                                broks_enabled=True)
         index = 0
         # # Only for Python > 2.7, DEBUG logs ...
@@ -490,7 +511,7 @@ class TestStatsD(AlignakTest):
         #     index = 1
         self.show_logs()
         self.assert_log_match(re.escape(
-            'Sending arbiter-master statistics to: localhost:8125, prefix: alignak'
+            'Sending arbiter-master statistics to: localhost:8125, prefix: fusionsupervision'
         ), index)
         index += 1
         self.assert_log_match(re.escape(
@@ -514,7 +535,7 @@ class TestStatsD(AlignakTest):
         # Get min, max, count and sum
         assert self.statsmgr.stats['test'] == (0, 0, 1, 0)
         # self.assert_log_match(re.escape(
-        #     'Sending data: alignak.arbiter-master.test:0|ms'
+        #     'Sending data: fusionsupervision.arbiter-master.test:0|ms'
         # ), 3)
         # Prepare brok and remove specific brok properties (for test purpose only...
         brok.prepare()
@@ -523,10 +544,10 @@ class TestStatsD(AlignakTest):
         brok.__dict__.pop('prepared')
         brok.__dict__.pop('uuid')
         brok.__dict__['data'].pop('ts')
-        assert brok.__dict__ == {'type': 'alignak_stat',
+        assert brok.__dict__ == {'type': 'fusionsupervision_stat',
                                  'data': {
                                      'type': 'gauge',
-                                     'metric': 'alignak.arbiter-master.test',
+                                     'metric': 'fusionsupervision.arbiter-master.test',
                                      'value': 0, 'uom': 'g'
                                  }}
 
@@ -536,7 +557,7 @@ class TestStatsD(AlignakTest):
         # Get min, max, count (incremented) and sum
         assert self.statsmgr.stats['test'] == (0, 1, 2, 1)
         # self.assert_log_match(re.escape(
-        #     'Sending data: alignak.arbiter-master.test:1000|ms'
+        #     'Sending data: fusionsupervision.arbiter-master.test:1000|ms'
         # ), 4)
         # Prepare brok and remove specific brok properties (for test purpose only...
         brok.prepare()
@@ -545,10 +566,10 @@ class TestStatsD(AlignakTest):
         brok.__dict__.pop('prepared')
         brok.__dict__.pop('uuid')
         brok.__dict__['data'].pop('ts')
-        assert brok.__dict__ == {'type': 'alignak_stat',
+        assert brok.__dict__ == {'type': 'fusionsupervision_stat',
                                  'data': {
                                      'type': 'gauge',
-                                     'metric': 'alignak.arbiter-master.test',
+                                     'metric': 'fusionsupervision.arbiter-master.test',
                                      'value': 1, 'uom': 'g'
                                  }}
 
@@ -558,7 +579,7 @@ class TestStatsD(AlignakTest):
         # Get min, max, count (incremented) and sum (increased)
         assert self.statsmgr.stats['test'] == (0, 12, 3, 13)
         # self.assert_log_match(re.escape(
-        #     'Sending data: alignak.arbiter-master.test:1000|ms'
+        #     'Sending data: fusionsupervision.arbiter-master.test:1000|ms'
         # ), 5)
         # Prepare brok and remove specific brok properties (for test purpose only...
         brok.prepare()
@@ -567,16 +588,16 @@ class TestStatsD(AlignakTest):
         brok.__dict__.pop('prepared')
         brok.__dict__.pop('uuid')
         brok.__dict__['data'].pop('ts')
-        assert brok.__dict__ == {'type': 'alignak_stat',
+        assert brok.__dict__ == {'type': 'fusionsupervision_stat',
                                  'data': {
                                      'type': 'gauge',
-                                     'metric': 'alignak.arbiter-master.test',
+                                     'metric': 'fusionsupervision.arbiter-master.test',
                                      'value': 12, 'uom': 'g'
                                  }}
 
 
 if os.sys.version_info > (2, 7):
-    class TestCarbon(AlignakTest):
+    class TestCarbon(FusionsupervisionTest):
         """
         This class test the Graphite interface
         """
@@ -609,7 +630,7 @@ if os.sys.version_info > (2, 7):
             # Register stats manager as disabled
             assert not self.statsmgr.connect('arbiter-master', 'arbiter',
                                              host='localhost', port=2003,
-                                             prefix='alignak', enabled=False)
+                                             prefix='fusionsupervision', enabled=False)
             assert self.statsmgr.statsd_enabled is False
             assert self.statsmgr.broks_enabled is False
             assert self.statsmgr.statsd_sock is None
@@ -622,7 +643,7 @@ if os.sys.version_info > (2, 7):
             # Register stats manager as disabled
             assert not self.statsmgr.connect('arbiter-master', 'arbiter',
                                              host='localhost', port=2003,
-                                             prefix='alignak', enabled=False,
+                                             prefix='fusionsupervision', enabled=False,
                                              broks_enabled=True)
             assert self.statsmgr.statsd_enabled is False
             assert self.statsmgr.broks_enabled is True
@@ -639,7 +660,7 @@ if os.sys.version_info > (2, 7):
             assert self.statsmgr.statsd_addr is None
             assert self.statsmgr.connect('arbiter-master', 'arbiter',
                                          host='localhost', port=2003,
-                                         prefix='alignak', enabled=True)
+                                         prefix='fusionsupervision', enabled=True)
             assert self.statsmgr.statsd_enabled is True
             assert self.statsmgr.broks_enabled is False
             assert self.statsmgr.carbon is not None
@@ -648,11 +669,11 @@ if os.sys.version_info > (2, 7):
             index = 0
             self.assert_log_match(re.escape(
                 'Graphite/carbon configuration for arbiter-master - localhost:2003, '
-                'prefix: alignak, enabled: True, broks: False, file: None'
+                'prefix: fusionsupervision, enabled: True, broks: False, file: None'
             ), index)
             index += 1
             self.assert_log_match(re.escape(
-                'Sending arbiter-master statistics to: localhost:2003, prefix: alignak'
+                'Sending arbiter-master statistics to: localhost:2003, prefix: fusionsupervision'
             ), index)
 
         def test_statsmgr_register_enabled_broks(self):
@@ -663,7 +684,7 @@ if os.sys.version_info > (2, 7):
             assert self.statsmgr.statsd_sock is None
             assert self.statsmgr.statsd_addr is None
             assert self.statsmgr.connect('arbiter-master', 'arbiter',
-                                         host='localhost', port=2003, prefix='alignak', enabled=True,
+                                         host='localhost', port=2003, prefix='fusionsupervision', enabled=True,
                                          broks_enabled=True)
             assert self.statsmgr.statsd_enabled is True
             assert self.statsmgr.broks_enabled is True
@@ -673,11 +694,11 @@ if os.sys.version_info > (2, 7):
             index = 0
             self.assert_log_match(re.escape(
                 'Graphite/carbon configuration for arbiter-master - localhost:2003, '
-                'prefix: alignak, enabled: True, broks: True, file: None'
+                'prefix: fusionsupervision, enabled: True, broks: True, file: None'
             ), index)
             index += 1
             self.assert_log_match(re.escape(
-                'Sending arbiter-master statistics to: localhost:2003, prefix: alignak'
+                'Sending arbiter-master statistics to: localhost:2003, prefix: fusionsupervision'
             ), index)
 
         def test_statsmgr_connect(self):
@@ -687,7 +708,7 @@ if os.sys.version_info > (2, 7):
             # Register stats manager as disabled
             assert not self.statsmgr.connect('arbiter-master', 'arbiter',
                                              host='localhost', port=2003,
-                                             prefix='alignak', enabled=False)
+                                             prefix='fusionsupervision', enabled=False)
 
             # Connect to StatsD server
             assert self.statsmgr.statsd_sock is None
@@ -706,15 +727,15 @@ if os.sys.version_info > (2, 7):
             # Register stats manager as enabled (another port than the default one)
             assert self.statsmgr.connect('arbiter-master', 'arbiter',
                                          host='localhost', port=8888,
-                                         prefix='alignak', enabled=True)
+                                         prefix='fusionsupervision', enabled=True)
             index = 0
             self.assert_log_match(re.escape(
                 'Graphite/carbon configuration for arbiter-master - localhost:8888, '
-                'prefix: alignak, enabled: True, broks: False, file: None'
+                'prefix: fusionsupervision, enabled: True, broks: False, file: None'
             ), index)
             index += 1
             self.assert_log_match(re.escape(
-                'Sending arbiter-master statistics to: localhost:8888, prefix: alignak'
+                'Sending arbiter-master statistics to: localhost:8888, prefix: fusionsupervision'
             ), index)
             index += 1
             self.assert_log_match(re.escape(
@@ -728,18 +749,18 @@ if os.sys.version_info > (2, 7):
             """
             # Register stats manager as enabled
             self.statsmgr.connect('arbiter-master', 'arbiter',
-                                  host='localhost', port=2003, prefix='alignak', enabled=True,
+                                  host='localhost', port=2003, prefix='fusionsupervision', enabled=True,
                                   broks_enabled=True)
             assert self.statsmgr.metrics_count == 0
 
             index = 0
             self.assert_log_match(re.escape(
                 'Graphite/carbon configuration for arbiter-master - localhost:2003, '
-                'prefix: alignak, enabled: True, broks: True, file: None'
+                'prefix: fusionsupervision, enabled: True, broks: True, file: None'
             ), index)
             index += 1
             self.assert_log_match(re.escape(
-                'Sending arbiter-master statistics to: localhost:2003, prefix: alignak'
+                'Sending arbiter-master statistics to: localhost:2003, prefix: fusionsupervision'
             ), index)
             index += 1
             self.assert_log_match(re.escape(
@@ -758,7 +779,7 @@ if os.sys.version_info > (2, 7):
             # Get min, max, count and sum
             assert self.statsmgr.stats['test'] == (0, 0, 1, 0)
             # self.assert_log_match(re.escape(
-            #     'Sending data: alignak.arbiter-master.test:0|ms'
+            #     'Sending data: fusionsupervision.arbiter-master.test:0|ms'
             # ), 3)
             # Prepare brok and remove specific brok properties (for test purpose only...
             brok.prepare()
@@ -767,10 +788,10 @@ if os.sys.version_info > (2, 7):
             brok.__dict__.pop('prepared')
             brok.__dict__.pop('uuid')
             brok.__dict__['data'].pop('ts')
-            assert brok.__dict__ == {'type': 'alignak_stat',
+            assert brok.__dict__ == {'type': 'fusionsupervision_stat',
                                      'data': {
                                          'type': 'timer',
-                                         'metric': 'alignak.arbiter-master.test',
+                                         'metric': 'fusionsupervision.arbiter-master.test',
                                          'value': 0, 'uom': 'ms'
                                      }}
 
@@ -783,7 +804,7 @@ if os.sys.version_info > (2, 7):
             # Get min, max, count (incremented) and sum
             assert self.statsmgr.stats['test'] == (0, 1, 2, 1)
             # self.assert_log_match(re.escape(
-            #     'Sending data: alignak.arbiter-master.test:1000|ms'
+            #     'Sending data: fusionsupervision.arbiter-master.test:1000|ms'
             # ), 4)
             # Prepare brok and remove specific brok properties (for test purpose only...
             brok.prepare()
@@ -792,10 +813,10 @@ if os.sys.version_info > (2, 7):
             brok.__dict__.pop('prepared')
             brok.__dict__.pop('uuid')
             brok.__dict__['data'].pop('ts')
-            assert brok.__dict__ == {'type': 'alignak_stat',
+            assert brok.__dict__ == {'type': 'fusionsupervision_stat',
                                      'data': {
                                          'type': 'timer',
-                                         'metric': 'alignak.arbiter-master.test',
+                                         'metric': 'fusionsupervision.arbiter-master.test',
                                          'value': 1000, 'uom': 'ms'
                                      }}
 
@@ -808,7 +829,7 @@ if os.sys.version_info > (2, 7):
             # Get min, max, count (incremented) and sum (increased)
             assert self.statsmgr.stats['test'] == (0, 12, 3, 13)
             # self.assert_log_match(re.escape(
-            #     'Sending data: alignak.arbiter-master.test:1000|ms'
+            #     'Sending data: fusionsupervision.arbiter-master.test:1000|ms'
             # ), 5)
             # Prepare brok and remove specific brok properties (for test purpose only...
             brok.prepare()
@@ -817,10 +838,10 @@ if os.sys.version_info > (2, 7):
             brok.__dict__.pop('prepared')
             brok.__dict__.pop('uuid')
             brok.__dict__['data'].pop('ts')
-            assert brok.__dict__ == {'type': 'alignak_stat',
+            assert brok.__dict__ == {'type': 'fusionsupervision_stat',
                                      'data': {
                                          'type': 'timer',
-                                         'metric': 'alignak.arbiter-master.test',
+                                         'metric': 'fusionsupervision.arbiter-master.test',
                                          'value': 12000, 'uom': 'ms'
                                      }}
 
@@ -830,16 +851,16 @@ if os.sys.version_info > (2, 7):
             """
             # Register stats manager as enabled
             self.statsmgr.connect('broker-master', 'broker',
-                                  host='localhost', port=2003, prefix='alignak', enabled=True,
+                                  host='localhost', port=2003, prefix='fusionsupervision', enabled=True,
                                   broks_enabled=True)
             index = 0
             self.assert_log_match(re.escape(
                 'Graphite/carbon configuration for broker-master - localhost:2003, '
-                'prefix: alignak, enabled: True, broks: True, file: None'
+                'prefix: fusionsupervision, enabled: True, broks: True, file: None'
             ), index)
             index += 1
             self.assert_log_match(re.escape(
-                'Sending broker-master statistics to: localhost:2003, prefix: alignak'
+                'Sending broker-master statistics to: localhost:2003, prefix: fusionsupervision'
             ), index)
             index += 1
             self.assert_log_match(re.escape(
@@ -858,7 +879,7 @@ if os.sys.version_info > (2, 7):
             # Get min, max, count and sum
             assert self.statsmgr.stats['test'] == (0, 0, 1, 0)
             # self.assert_log_match(re.escape(
-            #     'Sending data: alignak.arbiter-master.test:0|ms'
+            #     'Sending data: fusionsupervision.arbiter-master.test:0|ms'
             # ), 3)
             # Prepare brok and remove specific brok properties (for test purpose only...
             brok.prepare()
@@ -867,10 +888,10 @@ if os.sys.version_info > (2, 7):
             brok.__dict__.pop('prepared')
             brok.__dict__.pop('uuid')
             brok.__dict__['data'].pop('ts')
-            assert brok.__dict__ == {'type': 'alignak_stat',
+            assert brok.__dict__ == {'type': 'fusionsupervision_stat',
                                      'data': {
                                          'type': 'counter',
-                                         'metric': 'alignak.broker-master.test',
+                                         'metric': 'fusionsupervision.broker-master.test',
                                          'value': 0, 'uom': 'c'
                                      }}
 
@@ -883,7 +904,7 @@ if os.sys.version_info > (2, 7):
             # Get min, max, count (incremented) and sum
             assert self.statsmgr.stats['test'] == (0, 1, 2, 1)
             # self.assert_log_match(re.escape(
-            #     'Sending data: alignak.arbiter-master.test:1000|ms'
+            #     'Sending data: fusionsupervision.arbiter-master.test:1000|ms'
             # ), 4)
             # Prepare brok and remove specific brok properties (for test purpose only...
             brok.prepare()
@@ -892,10 +913,10 @@ if os.sys.version_info > (2, 7):
             brok.__dict__.pop('prepared')
             brok.__dict__.pop('uuid')
             brok.__dict__['data'].pop('ts')
-            assert brok.__dict__ == {'type': 'alignak_stat',
+            assert brok.__dict__ == {'type': 'fusionsupervision_stat',
                                      'data': {
                                          'type': 'counter',
-                                         'metric': 'alignak.broker-master.test',
+                                         'metric': 'fusionsupervision.broker-master.test',
                                          'value': 1, 'uom': 'c'
                                      }}
 
@@ -905,7 +926,7 @@ if os.sys.version_info > (2, 7):
             # Get min, max, count (incremented) and sum (increased)
             assert self.statsmgr.stats['test'] == (0, 12, 3, 13)
             # self.assert_log_match(re.escape(
-            #     'Sending data: alignak.arbiter-master.test:1000|ms'
+            #     'Sending data: fusionsupervision.arbiter-master.test:1000|ms'
             # ), 5)
             # Prepare brok and remove specific brok properties (for test purpose only...
             brok.prepare()
@@ -914,10 +935,10 @@ if os.sys.version_info > (2, 7):
             brok.__dict__.pop('prepared')
             brok.__dict__.pop('uuid')
             brok.__dict__['data'].pop('ts')
-            assert brok.__dict__ == {'type': 'alignak_stat',
+            assert brok.__dict__ == {'type': 'fusionsupervision_stat',
                                      'data': {
                                          'type': 'counter',
-                                         'metric': 'alignak.broker-master.test',
+                                         'metric': 'fusionsupervision.broker-master.test',
                                          'value': 12, 'uom': 'c'
                                      }}
 
@@ -927,16 +948,16 @@ if os.sys.version_info > (2, 7):
             """
             # Register stats manager as enabled
             self.statsmgr.connect('arbiter-master', 'arbiter',
-                                  host='localhost', port=2003, prefix='alignak', enabled=True,
+                                  host='localhost', port=2003, prefix='fusionsupervision', enabled=True,
                                   broks_enabled=True)
             index = 0
             self.assert_log_match(re.escape(
                 'Graphite/carbon configuration for arbiter-master - localhost:2003, '
-                'prefix: alignak, enabled: True, broks: True, file: None'
+                'prefix: fusionsupervision, enabled: True, broks: True, file: None'
             ), index)
             index += 1
             self.assert_log_match(re.escape(
-                'Sending arbiter-master statistics to: localhost:2003, prefix: alignak'
+                'Sending arbiter-master statistics to: localhost:2003, prefix: fusionsupervision'
             ), index)
             index += 1
             self.assert_log_match(re.escape(
@@ -955,7 +976,7 @@ if os.sys.version_info > (2, 7):
             # Get min, max, count and sum
             assert self.statsmgr.stats['test'] == (0, 0, 1, 0)
             # self.assert_log_match(re.escape(
-            #     'Sending data: alignak.arbiter-master.test:0|ms'
+            #     'Sending data: fusionsupervision.arbiter-master.test:0|ms'
             # ), 3)
             # Prepare brok and remove specific brok properties (for test purpose only...
             brok.prepare()
@@ -964,10 +985,10 @@ if os.sys.version_info > (2, 7):
             brok.__dict__.pop('prepared')
             brok.__dict__.pop('uuid')
             brok.__dict__['data'].pop('ts')
-            assert brok.__dict__ == {'type': 'alignak_stat',
+            assert brok.__dict__ == {'type': 'fusionsupervision_stat',
                                      'data': {
                                          'type': 'gauge',
-                                         'metric': 'alignak.arbiter-master.test',
+                                         'metric': 'fusionsupervision.arbiter-master.test',
                                          'value': 0, 'uom': 'g'
                                      }}
 
@@ -980,7 +1001,7 @@ if os.sys.version_info > (2, 7):
             # Get min, max, count (incremented) and sum
             assert self.statsmgr.stats['test'] == (0, 1, 2, 1)
             # self.assert_log_match(re.escape(
-            #     'Sending data: alignak.arbiter-master.test:1000|ms'
+            #     'Sending data: fusionsupervision.arbiter-master.test:1000|ms'
             # ), 4)
             # Prepare brok and remove specific brok properties (for test purpose only...
             brok.prepare()
@@ -989,10 +1010,10 @@ if os.sys.version_info > (2, 7):
             brok.__dict__.pop('prepared')
             brok.__dict__.pop('uuid')
             brok.__dict__['data'].pop('ts')
-            assert brok.__dict__ == {'type': 'alignak_stat',
+            assert brok.__dict__ == {'type': 'fusionsupervision_stat',
                                      'data': {
                                          'type': 'gauge',
-                                         'metric': 'alignak.arbiter-master.test',
+                                         'metric': 'fusionsupervision.arbiter-master.test',
                                          'value': 1, 'uom': 'g'
                                      }}
 
@@ -1005,7 +1026,7 @@ if os.sys.version_info > (2, 7):
             # Get min, max, count (incremented) and sum (increased)
             assert self.statsmgr.stats['test'] == (0, 12, 3, 13)
             # self.assert_log_match(re.escape(
-            #     'Sending data: alignak.arbiter-master.test:1000|ms'
+            #     'Sending data: fusionsupervision.arbiter-master.test:1000|ms'
             # ), 5)
             # Prepare brok and remove specific brok properties (for test purpose only...
             brok.prepare()
@@ -1014,10 +1035,10 @@ if os.sys.version_info > (2, 7):
             brok.__dict__.pop('prepared')
             brok.__dict__.pop('uuid')
             brok.__dict__['data'].pop('ts')
-            assert brok.__dict__ == {'type': 'alignak_stat',
+            assert brok.__dict__ == {'type': 'fusionsupervision_stat',
                                      'data': {
                                          'type': 'gauge',
-                                         'metric': 'alignak.arbiter-master.test',
+                                         'metric': 'fusionsupervision.arbiter-master.test',
                                          'value': 12, 'uom': 'g'
                                      }}
 
@@ -1031,7 +1052,7 @@ if os.sys.version_info > (2, 7):
             """
             # Register stats manager as enabled
             self.statsmgr.connect('arbiter-master', 'arbiter',
-                                  host='localhost', port=2003, prefix='alignak', enabled=True)
+                                  host='localhost', port=2003, prefix='fusionsupervision', enabled=True)
             assert self.statsmgr.metrics_count == 0
             assert self.statsmgr.stats == {}
             self.clear_logs()
@@ -1056,7 +1077,7 @@ if os.sys.version_info > (2, 7):
             assert self.statsmgr.flush()
 
 
-class TestStatsFile(AlignakTest):
+class TestStatsFile(FusionsupervisionTest):
     """
     This class test the Alignak stats in a file
     """
@@ -1069,27 +1090,27 @@ class TestStatsFile(AlignakTest):
         self.clear_logs()
 
         # Declare environment to send stats to a file
-        os.environ['ALIGNAK_STATS_FILE'] = '/tmp/stats.alignak'
+        os.environ['ALIGNAK_STATS_FILE'] = '/tmp/stats.fusionsupervision'
         # Those are the same as the default values:
         os.environ['ALIGNAK_STATS_FILE_LINE_FMT'] = '[#date#] #counter# #value# #uom#\n'
         os.environ['ALIGNAK_STATS_FILE_DATE_FMT'] = '%Y-%m-%d %H:%M:%S'
 
         # Create our stats manager...
         self.statsmgr = Stats()
-        assert self.statsmgr.stats_file == '/tmp/stats.alignak'
+        assert self.statsmgr.stats_file == '/tmp/stats.fusionsupervision'
         assert self.statsmgr.line_fmt == '[#date#] #counter# #value# #uom#\n'
         assert self.statsmgr.date_fmt == '%Y-%m-%d %H:%M:%S'
 
         self.line_count = 0
-        if os.path.exists('/tmp/stats.alignak'):
-            os.remove('/tmp/stats.alignak')
+        if os.path.exists('/tmp/stats.fusionsupervision'):
+            os.remove('/tmp/stats.fusionsupervision')
 
     def tearDown(self):
         self.statsmgr.file_d.close()
 
-        print(("-----\n%s stats file\n-----\n" % '/tmp/stats.alignak'))
+        print(("-----\n%s stats file\n-----\n" % '/tmp/stats.fusionsupervision'))
         try:
-            hfile = open('/tmp/stats.alignak', 'r')
+            hfile = open('/tmp/stats.fusionsupervision', 'r')
             lines = hfile.readlines()
             print(lines)
             hfile.close()
@@ -1107,12 +1128,12 @@ class TestStatsFile(AlignakTest):
                                statsd_enabled=True, statsd_host=None)
         index = 0
         self.assert_log_match(re.escape(
-            'StatsD configuration for arbiter-master - None:8125, prefix: alignak, '
-            'enabled: True, broks: False, file: /tmp/stats.alignak'
+            'StatsD configuration for arbiter-master - None:8125, prefix: fusionsupervision, '
+            'enabled: True, broks: False, file: /tmp/stats.fusionsupervision'
         ), index)
         index += 1
         self.assert_log_match(re.escape(
-            'Alignak internal statistics are written in the file /tmp/stats.alignak'
+            'Alignak internal statistics are written in the file /tmp/stats.fusionsupervision'
         ), index)
 
         assert self.statsmgr.stats == {}
@@ -1143,12 +1164,12 @@ class TestStatsFile(AlignakTest):
                                statsd_enabled=True, statsd_host=None)
         index = 0
         self.assert_log_match(re.escape(
-            'StatsD configuration for arbiter-master - None:8125, prefix: alignak, '
-            'enabled: True, broks: False, file: /tmp/stats.alignak'
+            'StatsD configuration for arbiter-master - None:8125, prefix: fusionsupervision, '
+            'enabled: True, broks: False, file: /tmp/stats.fusionsupervision'
         ), index)
         index += 1
         self.assert_log_match(re.escape(
-            'Alignak internal statistics are written in the file /tmp/stats.alignak'
+            'Alignak internal statistics are written in the file /tmp/stats.fusionsupervision'
         ), index)
 
         assert self.statsmgr.stats == {}
@@ -1167,16 +1188,16 @@ class TestStatsFile(AlignakTest):
         # Register stats manager as enabled
         self.statsmgr.register('arbiter-master', 'arbiter',
                                statsd_host='localhost', statsd_port=8125,
-                               statsd_prefix='alignak', statsd_enabled=True,
+                               statsd_prefix='fusionsupervision', statsd_enabled=True,
                                broks_enabled=True)
         index = 0
         self.assert_log_match(re.escape(
-            'StatsD configuration for arbiter-master - localhost:8125, prefix: alignak, '
-            'enabled: True, broks: True, file: /tmp/stats.alignak'
+            'StatsD configuration for arbiter-master - localhost:8125, prefix: fusionsupervision, '
+            'enabled: True, broks: True, file: /tmp/stats.fusionsupervision'
         ), index)
         index += 1
         self.assert_log_match(re.escape(
-            'Sending arbiter-master statistics to: localhost:8125, prefix: alignak'
+            'Sending arbiter-master statistics to: localhost:8125, prefix: fusionsupervision'
         ), index)
         index += 1
         self.assert_log_match(re.escape(
@@ -1192,7 +1213,7 @@ class TestStatsFile(AlignakTest):
         ), index)
         index += 1
         self.assert_log_match(re.escape(
-            'Alignak internal statistics are written in the file /tmp/stats.alignak'
+            'Alignak internal statistics are written in the file /tmp/stats.fusionsupervision'
         ), index)
         index += 1
 

@@ -1,58 +1,78 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2015-2018: Alignak team, see AUTHORS.txt file for contributors
+# Copyright (C) 2019-2019: FusionSupervision team, see AUTHORS.md file for contributors
 #
-# This file is part of Alignak.
+# This file is part of FusionSupervision engine.
 #
-# Alignak is free software: you can redistribute it and/or modify
+# FusionSupervision is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# Alignak is distributed in the hope that it will be useful,
+# FusionSupervision is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU Affero General Public License for more details.
 #
 # You should have received a copy of the GNU Affero General Public License
-# along with Alignak.  If not, see <http://www.gnu.org/licenses/>.
+# along with FusionSupervision engine.  If not, see <http://www.gnu.org/licenses/>.
 #
 #
 # This file incorporates work covered by the following copyright and
 # permission notice:
 #
-#  Copyright (C) 2009-2014:
-#     Jean Gabes, naparuba@gmail.com
-#     Hartmut Goebel, h.goebel@goebel-consult.de
-#     Grégory Starck, g.starck@gmail.com
-#     Sebastien Coavoux, s.coavoux@free.fr
-#     Christophe SIMON, christophe.simon@dailymotion.com
-
-#  This file is part of Shinken.
+#  Copyright (C) 2015-2018: Alignak team, see AUTHORS.alignak.txt file for contributors
 #
-#  Shinken is free software: you can redistribute it and/or modify
+#  This file is part of Alignak.
+#
+#  Alignak is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU Affero General Public License as published by
 #  the Free Software Foundation, either version 3 of the License, or
 #  (at your option) any later version.
 #
-#  Shinken is distributed in the hope that it will be useful,
+#  Alignak is distributed in the hope that it will be useful,
 #  but WITHOUT ANY WARRANTY; without even the implied warranty of
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #  GNU Affero General Public License for more details.
 #
 #  You should have received a copy of the GNU Affero General Public License
-#  along with Shinken.  If not, see <http://www.gnu.org/licenses/>.
+#  along with Alignak.  If not, see <http://www.gnu.org/licenses/>.
+#
+#
+#  This file incorporates work covered by the following copyright and
+#  permission notice:
+#
+#   Copyright (C) 2009-2014:
+#      Jean Gabes, naparuba@gmail.com
+#      Hartmut Goebel, h.goebel@goebel-consult.de
+#      Grégory Starck, g.starck@gmail.com
+#      Sebastien Coavoux, s.coavoux@free.fr
+#      Christophe SIMON, christophe.simon@dailymotion.com
+#
+#   This file is part of Shinken.
+#
+#   Shinken is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU Affero General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   Shinken is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU Affero General Public License for more details.
+#
+#   You should have received a copy of the GNU Affero General Public License
+#   along with Shinken.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Test alignak.property
+Test fusionsupervision.property
 """
 
+import fusionsupervision
+from fusionsupervision.property import NONE_OBJECT
 
-import alignak
-from alignak.property import NONE_OBJECT
-
-from .alignak_test import AlignakTest
+from .fusionsupervision_test import FusionsupervisionTest
 import pytest
 
 
@@ -83,10 +103,10 @@ class PropertyTests:
         assert not p.unused
 
 
-class TestBoolProp(PropertyTests, AlignakTest):
+class TestBoolProp(PropertyTests, FusionsupervisionTest):
     """Test the BoolProp class"""
 
-    prop_class = alignak.property.BoolProp
+    prop_class = fusionsupervision.property.BoolProp
 
     def test_pythonize(self):
         p = self.prop_class()
@@ -104,10 +124,10 @@ class TestBoolProp(PropertyTests, AlignakTest):
         assert p.pythonize(["on", "off"]) == False
 
 
-class TestIntegerProp(PropertyTests, AlignakTest):
+class TestIntegerProp(PropertyTests, FusionsupervisionTest):
     """Test the IntegerProp class"""
 
-    prop_class = alignak.property.IntegerProp
+    prop_class = fusionsupervision.property.IntegerProp
 
     def test_pythonize(self):
         p = self.prop_class()
@@ -117,10 +137,10 @@ class TestIntegerProp(PropertyTests, AlignakTest):
         assert p.pythonize(["2000.66", "1000.33"]) == 1000
 
 
-class TestFloatProp(PropertyTests, AlignakTest):
+class TestFloatProp(PropertyTests, FusionsupervisionTest):
     """Test the FloatProp class"""
 
-    prop_class = alignak.property.FloatProp
+    prop_class = fusionsupervision.property.FloatProp
 
     def test_pythonize(self):
         p = self.prop_class()
@@ -130,10 +150,10 @@ class TestFloatProp(PropertyTests, AlignakTest):
         assert p.pythonize(["2000.66", "1000.33"]) == 1000.33
 
 
-class TestStringProp(PropertyTests, AlignakTest):
+class TestStringProp(PropertyTests, FusionsupervisionTest):
     """Test the StringProp class"""
 
-    prop_class = alignak.property.StringProp
+    prop_class = fusionsupervision.property.StringProp
 
     def test_pythonize(self):
         p = self.prop_class()
@@ -144,10 +164,10 @@ class TestStringProp(PropertyTests, AlignakTest):
         assert p.pythonize(["yes", "no"]) == "no"
 
 
-class TestCharProp(PropertyTests, AlignakTest):
+class TestCharProp(PropertyTests, FusionsupervisionTest):
     """Test the CharProp class"""
 
-    prop_class = alignak.property.CharProp
+    prop_class = fusionsupervision.property.CharProp
 
     def test_pythonize(self):
         p = self.prop_class()
@@ -161,7 +181,7 @@ class TestCharProp(PropertyTests, AlignakTest):
 class TestPathProp(TestStringProp):
     """Test the PathProp class"""
 
-    prop_class = alignak.property.PathProp
+    prop_class = fusionsupervision.property.PathProp
 
     # As of now, PathProp is a subclass of StringProp without any
     # relevant change. So no further tests are implemented here.
@@ -170,16 +190,16 @@ class TestPathProp(TestStringProp):
 class TestConfigPathProp(TestStringProp):
     """Test the ConfigPathProp class"""
 
-    prop_class = alignak.property.ConfigPathProp
+    prop_class = fusionsupervision.property.ConfigPathProp
 
     # As of now, ConfigPathProp is a subclass of StringProp without
     # any relevant change. So no further tests are implemented here.
 
 
-class TestListProp(PropertyTests, AlignakTest):
+class TestListProp(PropertyTests, FusionsupervisionTest):
     """Test the ListProp class"""
 
-    prop_class = alignak.property.ListProp
+    prop_class = fusionsupervision.property.ListProp
 
     def test_pythonize(self):
         p = self.prop_class()
@@ -196,10 +216,10 @@ class TestListProp(PropertyTests, AlignakTest):
         assert p.pythonize(["1,2,3", "4,5,6"]) == ["1,2,3", "4,5,6"]
 
 
-class TestLogLevelProp(PropertyTests, AlignakTest):
+class TestLogLevelProp(PropertyTests, FusionsupervisionTest):
     """Test the LogLevelProp class"""
 
-    prop_class = alignak.property.LogLevelProp
+    prop_class = fusionsupervision.property.LogLevelProp
 
     def test_pythonize(self):
         p = self.prop_class()
@@ -215,10 +235,10 @@ class TestLogLevelProp(PropertyTests, AlignakTest):
         assert p.pythonize(["NOTSET", "CRITICAL"]) == 50
 
 
-class TestAddrProp(PropertyTests, AlignakTest):
+class TestAddrProp(PropertyTests, FusionsupervisionTest):
     """Test the AddrProp class"""
 
-    prop_class = alignak.property.AddrProp
+    prop_class = fusionsupervision.property.AddrProp
 
     def test_pythonize_with_IPv4_addr(self):
         p = self.prop_class()

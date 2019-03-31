@@ -1,23 +1,45 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2015-2018: Alignak team, see AUTHORS.txt file for contributors
+# Copyright (C) 2019-2019: FusionSupervision team, see AUTHORS.md file for contributors
 #
-# This file is part of Alignak.
+# This file is part of FusionSupervision engine.
 #
-# Alignak is free software: you can redistribute it and/or modify
+# FusionSupervision is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# Alignak is distributed in the hope that it will be useful,
+# FusionSupervision is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU Affero General Public License for more details.
 #
 # You should have received a copy of the GNU Affero General Public License
-# along with Alignak.  If not, see <http://www.gnu.org/licenses/>.
+# along with FusionSupervision engine.  If not, see <http://www.gnu.org/licenses/>.
 #
+#
+# This file incorporates work covered by the following copyright and
+# permission notice:
+#
+#  Copyright (C) 2015-2018: Alignak team, see AUTHORS.alignak.txt file for contributors
+#
+#  This file is part of Alignak.
+#
+#  Alignak is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU Affero General Public License as published by
+#  the Free Software Foundation, either version 3 of the License, or
+#  (at your option) any later version.
+#
+#  Alignak is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU Affero General Public License for more details.
+#
+#  You should have received a copy of the GNU Affero General Public License
+#  along with Alignak.  If not, see <http://www.gnu.org/licenses/>.
+#
+
 """
 This file tests the self monitoring features of the Alignak Arbiter
 """
@@ -29,14 +51,14 @@ import pytest
 import logging
 import requests_mock
 from freezegun import freeze_time
-from .alignak_test import AlignakTest
-from alignak.log import ALIGNAK_LOGGER_NAME
-from alignak.misc.serialization import unserialize
-from alignak.daemons.arbiterdaemon import Arbiter
-from alignak.dispatcher import Dispatcher, DispatcherError
+from .fusionsupervision_test import FusionsupervisionTest
+from fusionsupervision.log import ALIGNAK_LOGGER_NAME
+from fusionsupervision.misc.serialization import unserialize
+from fusionsupervision.daemons.arbiterdaemon import Arbiter
+from fusionsupervision.dispatcher import Dispatcher, DispatcherError
 
 
-class TestMonitor(AlignakTest):
+class TestMonitor(FusionsupervisionTest):
     """
     This class tests the dispatcher (distribute configuration to satellites)
     """
@@ -70,10 +92,10 @@ class TestMonitor(AlignakTest):
         """
         args = {
             'env_file': env_filename,
-            'alignak_name': 'alignak-test', 'daemon_name': 'arbiter-master'
+            'fusionsupervision_name': 'fusionsupervision-test', 'daemon_name': 'arbiter-master'
         }
         my_arbiter = Arbiter(**args)
-        my_arbiter.setup_alignak_logger()
+        my_arbiter.setup_fusionsupervision_logger()
 
         # Clear logs
         self.clear_logs()
@@ -89,9 +111,9 @@ class TestMonitor(AlignakTest):
               % ["%s:%s" % (link.address, link.port)
                  for link in my_dispatcher.all_daemons_links])
 
-        assert my_arbiter.alignak_monitor == "http://super_alignak:7773/ws"
-        assert my_arbiter.alignak_monitor_username == 'admin'
-        assert my_arbiter.alignak_monitor_password == 'admin'
+        assert my_arbiter.fusionsupervision_monitor == "http://super_fusionsupervision:7773/ws"
+        assert my_arbiter.fusionsupervision_monitor_username == 'admin'
+        assert my_arbiter.fusionsupervision_monitor_password == 'admin'
 
         metrics = []
         for type in sorted(my_arbiter.conf.types_creations):
@@ -104,12 +126,12 @@ class TestMonitor(AlignakTest):
 
         # Simulate the daemons HTTP interface (very simple simulation !)
         with requests_mock.mock() as mr:
-            mr.post('%s/login' % (my_arbiter.alignak_monitor),
+            mr.post('%s/login' % (my_arbiter.fusionsupervision_monitor),
                     json={
                         "_status": "OK",
                         "_result": ["1508507175582-c21a7d8e-ace0-47f2-9b10-280a17152c7c"]
                     })
-            mr.patch('%s/host' % (my_arbiter.alignak_monitor),
+            mr.patch('%s/host' % (my_arbiter.fusionsupervision_monitor),
                    json={
                        "_status": "OK",
                        "_result": ["1508507175582-c21a7d8e-ace0-47f2-9b10-280a17152c7c"]
@@ -119,7 +141,7 @@ class TestMonitor(AlignakTest):
             self.clear_logs()
             # frozen_datetime.tick(delta=datetime.timedelta(seconds=5))
 
-            my_arbiter.get_alignak_status(details=False)
+            my_arbiter.get_fusionsupervision_status(details=False)
 
             self.show_logs()
 
@@ -173,17 +195,17 @@ class TestMonitor(AlignakTest):
     def test_real(self):
         args = {
             'env_file': 'cfg/monitor/simple.ini',
-            'alignak_name': 'alignak-test', 'daemon_name': 'arbiter-master'
+            'fusionsupervision_name': 'fusionsupervision-test', 'daemon_name': 'arbiter-master'
         }
         my_arbiter = Arbiter(**args)
-        my_arbiter.setup_alignak_logger()
+        my_arbiter.setup_fusionsupervision_logger()
 
         # Clear logs
         self.clear_logs()
 
-        my_arbiter.alignak_monitor = "http://alignak-mos-ws.kiosks.ipmfrance.com"
-        my_arbiter.alignak_monitor_username = 'admin'
-        my_arbiter.alignak_monitor_password = 'ipm-France2017'
+        my_arbiter.fusionsupervision_monitor = "http://fusionsupervision-mos-ws.kiosks.ipmfrance.com"
+        my_arbiter.fusionsupervision_monitor_username = 'admin'
+        my_arbiter.fusionsupervision_monitor_password = 'ipm-France2017'
 
         # my_arbiter.load_modules_manager()
         my_arbiter.load_monitoring_config_file()

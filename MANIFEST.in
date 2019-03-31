@@ -8,6 +8,6 @@ recursive-exclude tests_integ *
 recursive-include etc *.*
 recursive-include bin *.*
 recursive-include contrib *.*
-recursive-include alignak *.*
+recursive-include fusionsupervision *.*
 global-exclude *.pyc
 global-exclude *.log

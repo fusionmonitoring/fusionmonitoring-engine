@@ -1,34 +1,56 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2015-2018: Alignak team, see AUTHORS.txt file for contributors
+# Copyright (C) 2019-2019: FusionSupervision team, see AUTHORS.md file for contributors
 #
-# This file is part of Alignak.
+# This file is part of FusionSupervision engine.
 #
-# Alignak is free software: you can redistribute it and/or modify
+# FusionSupervision is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# Alignak is distributed in the hope that it will be useful,
+# FusionSupervision is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU Affero General Public License for more details.
 #
 # You should have received a copy of the GNU Affero General Public License
-# along with Alignak.  If not, see <http://www.gnu.org/licenses/>.
+# along with FusionSupervision engine.  If not, see <http://www.gnu.org/licenses/>.
 #
 #
+# This file incorporates work covered by the following copyright and
+# permission notice:
+#
+#  Copyright (C) 2015-2018: Alignak team, see AUTHORS.alignak.txt file for contributors
+#
+#  This file is part of Alignak.
+#
+#  Alignak is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU Affero General Public License as published by
+#  the Free Software Foundation, either version 3 of the License, or
+#  (at your option) any later version.
+#
+#  Alignak is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU Affero General Public License for more details.
+#
+#  You should have received a copy of the GNU Affero General Public License
+#  along with Alignak.  If not, see <http://www.gnu.org/licenses/>.
+#
+#
+
 """
 This file contains the test for the Alignak configuration checks. Indeed, it checks the
 correctness of the monitored system configuration contained in the Nagios flat-files...
-not the Alignak overall configuration defined in the alignak.ini!
+not the Alignak overall configuration defined in the fusionsupervision.ini!
 
  Almost all of these tests are using the self.setup_with_file function that is declared in
-the AlignakTest class. This function will get the *cfg/alignak.ini* configuration file.
+the FusionsupervisionTest class. This function will get the *cfg/fusionsupervision.ini* configuration file.
 
  This is because all the tests were written before the configuration refactoring and it makes
- it easier to use always the same alignak.ini file whereas only the objects configuration is
+ it easier to use always the same fusionsupervision.ini file whereas only the objects configuration is
 changing:)
 
 """
@@ -36,11 +58,11 @@ import os
 import re
 import time
 import unittest2
-from .alignak_test import AlignakTest
+from .fusionsupervision_test import FusionsupervisionTest
 import pytest
 
 
-class TestConfig(AlignakTest):
+class TestConfig(FusionsupervisionTest):
     """
     This class tests the configuration
     """
@@ -52,7 +74,7 @@ class TestConfig(AlignakTest):
 
         :return: None
         """
-        self.setup_with_file('../etc/alignak.cfg', './etc/alignak.ini')
+        self.setup_with_file('../etc/fusionsupervision.cfg', './etc/fusionsupervision.ini')
         assert self.conf_is_correct
 
         # No error messages
@@ -92,7 +114,7 @@ class TestConfig(AlignakTest):
 
         :return: None
         """
-        self.setup_with_file('../etc/alignak.cfg', '../etc/alignak.ini')
+        self.setup_with_file('../etc/fusionsupervision.cfg', '../etc/fusionsupervision.ini')
         assert self.conf_is_correct
 
         # No error messages
@@ -217,8 +239,8 @@ class TestConfig(AlignakTest):
         assert self._arbiter.conf.main_config_file == os.path.abspath('cfg/cfg_default.cfg')
 
         # Default Alignak name is the arbiter name but it may be set from the configuration
-        assert self._arbiter.conf.alignak_name == 'My Alignak'
-        assert self._arbiter.alignak_name == 'My Alignak'
+        assert self._arbiter.conf.fusionsupervision_name == 'My Alignak'
+        assert self._arbiter.fusionsupervision_name == 'My Alignak'
 
         # Default Alignak daemons start/stop configuration
         # assert self._arbiter.conf.daemons_start_timeout == 1
@@ -226,12 +248,12 @@ class TestConfig(AlignakTest):
         assert self._arbiter.conf.daemons_start_timeout == 1
         assert self._arbiter.conf.daemons_stop_timeout == 5
 
-    def test_config_conf_inner_properties_named_alignak(self):
-        """ Default configuration with an alignak_name property
+    def test_config_conf_inner_properties_named_fusionsupervision(self):
+        """ Default configuration with an fusionsupervision_name property
 
         :return: None
         """
-        self.setup_with_file('cfg/cfg_default_alignak_name.cfg')
+        self.setup_with_file('cfg/cfg_default_fusionsupervision_name.cfg')
         assert self.conf_is_correct
 
         # No error messages
@@ -243,24 +265,24 @@ class TestConfig(AlignakTest):
         assert self._arbiter.conf.conf_is_correct
 
         # Alignak name is defined in the configuration (from the Nagios legacy)
-        assert self._arbiter.conf.alignak_name == 'my_alignak'
+        assert self._arbiter.conf.fusionsupervision_name == 'my_fusionsupervision'
         # Alignak name is defined in the arbiter (from the ini configuration file or
         # from the command line)
-        # The value defined in the Cfg files takes precedence over the one in alignak.ini!
-        # assert self._arbiter.alignak_name == 'My Alignak'
-        assert self._arbiter.alignak_name == 'my_alignak'
+        # The value defined in the Cfg files takes precedence over the one in fusionsupervision.ini!
+        # assert self._arbiter.fusionsupervision_name == 'My Alignak'
+        assert self._arbiter.fusionsupervision_name == 'my_fusionsupervision'
 
         # Alignak name is defined in the configuration dispatched to the schedulers
         assert len(self._arbiter.dispatcher.schedulers) == 1
         for scheduler in self._arbiter.dispatcher.schedulers:
-            assert 'alignak_name' in scheduler.cfg
-            assert scheduler.cfg.get('alignak_name') == 'my_alignak'
+            assert 'fusionsupervision_name' in scheduler.cfg
+            assert scheduler.cfg.get('fusionsupervision_name') == 'my_fusionsupervision'
 
         # Alignak name is defined in the configuration dispatched to the satellites
         assert len(self._arbiter.dispatcher.satellites) == 4
         for satellite in self._arbiter.dispatcher.satellites:
-            assert 'alignak_name' in satellite.cfg
-            assert satellite.cfg.get('alignak_name') == 'my_alignak'
+            assert 'fusionsupervision_name' in satellite.cfg
+            assert satellite.cfg.get('fusionsupervision_name') == 'my_fusionsupervision'
 
     def test_config_ok_no_declared_daemons(self):
         """ Default configuration has no loading problems ... but no daemons are defined
@@ -268,7 +290,7 @@ class TestConfig(AlignakTest):
 
         :return: None
         """
-        self.setup_with_file('cfg/cfg_default.cfg', 'cfg/config/alignak-no-daemons.ini')
+        self.setup_with_file('cfg/cfg_default.cfg', 'cfg/config/fusionsupervision-no-daemons.ini')
         assert self.conf_is_correct
 
         # No error messages
@@ -307,7 +329,7 @@ class TestConfig(AlignakTest):
         if os.name == 'nt':
             return
 
-        self.setup_with_file('cfg/conf_in_symlinks/alignak_conf_in_symlinks.cfg')
+        self.setup_with_file('cfg/conf_in_symlinks/fusionsupervision_conf_in_symlinks.cfg')
 
         svc = self._arbiter.conf.services.find_srv_by_name_and_hostname("test_host_0",
                                                                        "test_HIDDEN")
@@ -319,7 +341,7 @@ class TestConfig(AlignakTest):
 
         :return: None
         """
-        self.setup_with_file('cfg/config/alignak_define_with_space.cfg')
+        self.setup_with_file('cfg/config/fusionsupervision_define_with_space.cfg')
         assert self.conf_is_correct
 
         # No error messages
@@ -384,7 +406,7 @@ class TestConfig(AlignakTest):
 
         :return: None
         """
-        self.setup_with_file('cfg/config/alignak_definition_order.cfg')
+        self.setup_with_file('cfg/config/fusionsupervision_definition_order.cfg')
         assert self.conf_is_correct
 
         # No error messages
@@ -406,7 +428,7 @@ class TestConfig(AlignakTest):
 
         :return: None
         """
-        self.setup_with_file('cfg/config/alignak_service_not_hostname.cfg')
+        self.setup_with_file('cfg/config/fusionsupervision_service_not_hostname.cfg')
         assert self.conf_is_correct
 
         host = self._scheduler.hosts.find_by_name("test_host_0")
@@ -435,7 +457,7 @@ class TestConfig(AlignakTest):
 
         :return: None
         """
-        self.setup_with_file('cfg/config/alignak_service_description_inheritance.cfg')
+        self.setup_with_file('cfg/config/fusionsupervision_service_description_inheritance.cfg')
         assert self.conf_is_correct
         self._sched = self._scheduler
 
@@ -492,7 +514,7 @@ class TestConfig(AlignakTest):
 
         :return: None
         """
-        self.setup_with_file('cfg/config/alignak_service_description_inheritance.cfg')
+        self.setup_with_file('cfg/config/fusionsupervision_service_description_inheritance.cfg')
         assert self.conf_is_correct
         self._sched = self._scheduler
 
@@ -512,13 +534,13 @@ class TestConfig(AlignakTest):
         :return: None
         """
         with pytest.raises(SystemExit):
-            self.setup_with_file('cfg/config/alignak_service_nohost.cfg')
+            self.setup_with_file('cfg/config/fusionsupervision_service_nohost.cfg')
         assert not self.conf_is_correct
         # assert "Configuration in service::will_not_exist is incorrect; " \
-        #               "from: cfg/config/alignak_service_nohost.cfg:1" in \
+        #               "from: cfg/config/fusionsupervision_service_nohost.cfg:1" in \
         #               self.configuration_errors
         # assert "a service has been defined without host_name nor " \
-        #               "hostgroup_name, from: cfg/config/alignak_service_nohost.cfg:1" in \
+        #               "hostgroup_name, from: cfg/config/fusionsupervision_service_nohost.cfg:1" in \
         #               self.configuration_errors
         # assert "[service::will_not_exist] not bound to any host." in \
         #               self.configuration_errors
@@ -579,7 +601,7 @@ class TestConfig(AlignakTest):
         :return: None
         """
         with pytest.raises(SystemExit):
-            self.setup_with_file('cfg/config/alignak_broken_1.cfg')
+            self.setup_with_file('cfg/config/fusionsupervision_broken_1.cfg')
         assert not self.conf_is_correct
 
         # Error messages
@@ -720,7 +742,7 @@ class TestConfig(AlignakTest):
         :return: None
         """
         with pytest.raises(SystemExit):
-            self.setup_with_file('cfg/config/alignak_broken_2.cfg')
+            self.setup_with_file('cfg/config/fusionsupervision_broken_2.cfg')
         assert not self.conf_is_correct
 
         # Error messages
@@ -743,7 +765,7 @@ class TestConfig(AlignakTest):
         :return: None
         """
         with pytest.raises(SystemExit):
-            self.setup_with_file('cfg/config/alignak_bad_timeperiods.cfg')
+            self.setup_with_file('cfg/config/fusionsupervision_bad_timeperiods.cfg')
         assert not self.conf_is_correct
 
         self.assert_any_cfg_log_match(
@@ -1064,7 +1086,7 @@ class TestConfig(AlignakTest):
         :return: None
         """
         with pytest.raises(SystemExit):
-            self.setup_with_file('cfg/cfg_default.cfg', 'cfg/config/alignak-bad-realms.ini')
+            self.setup_with_file('cfg/cfg_default.cfg', 'cfg/config/fusionsupervision-bad-realms.ini')
             self.show_logs()
         assert not self.conf_is_correct
         self.show_configuration_logs()
@@ -1143,7 +1165,7 @@ class TestConfig(AlignakTest):
 
         :return: None
         """
-        self.setup_with_file('cfg/config/alignak_antivirg.cfg')
+        self.setup_with_file('cfg/config/fusionsupervision_antivirg.cfg')
         assert self.conf_is_correct, "Configuration is not valid"
 
         # try to get the host
