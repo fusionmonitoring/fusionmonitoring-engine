@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2019-2019: FusionSupervision team, see AUTHORS.md file for contributors
@@ -17,3 +18,14 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with FusionSupervision engine.  If not, see <http://www.gnu.org/licenses/>.
 #
+
+import zmq
+
+context = zmq.Context()
+socket = context.socket(zmq.SUB)
+socket.connect("tcp://localhost:5666")
+socket.setsockopt_string(zmq.SUBSCRIBE, "poller-run-checks")
+
+while True:
+    socket.recv()
+    print("Received data...")

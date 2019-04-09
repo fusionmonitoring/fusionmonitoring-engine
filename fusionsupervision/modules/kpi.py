@@ -17,3 +17,12 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with FusionSupervision engine.  If not, see <http://www.gnu.org/licenses/>.
 #
+
+from fusionsupervision import common
+
+class KPI():
+    """Manage KPIs sent by other modules. After received, send to timeseries databases, like InfluxDB"""
+
+    def __init__(self, init_zmq=True):
+        if init_zmq:
+            self.socket = common.create_zmq_subscriver(5700, "get-KPIs")

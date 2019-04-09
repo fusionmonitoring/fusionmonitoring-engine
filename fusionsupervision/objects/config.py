@@ -2255,7 +2255,7 @@ class Config(Item):  # pylint: disable=R0904,R0902
             mod_configuration = {
                 'name': 'inner-metrics',
                 'type': 'metrics',
-                'python_name': 'fusionsupervision.modules.inner_metrics',
+                'python_name': 'fusionsupervision.modules_special.inner_metrics',
                 'imported_from': 'inner',
                 'enabled': True
             }
@@ -2283,7 +2283,7 @@ class Config(Item):  # pylint: disable=R0904,R0902
             mod_configuration = {
                 'name': 'inner-retention',
                 'type': 'retention',
-                'python_name': 'fusionsupervision.modules.inner_retention',
+                'python_name': 'fusionsupervision.modules_special.inner_retention',
                 'imported_from': 'inner',
                 'enabled': True
             }

@@ -21,9 +21,6 @@ CherryPy==15.0.0
 # Requests to communicate between the daemons
 requests==2.20.0
 
-# importlib is used to import modules used by the daemons
-importlib; python_version == '2.7'
-
 # Colored console log
 termcolor==1.1.0
 
@@ -43,8 +40,6 @@ numpy==1.14.3
 # Uncomment or `pip install pyopenssl` if SSL must be used between the FusionSupervision Engine daemons
 # pyopenssl
 
-# configparser is used to parse the main configuration file
-configparser; python_version == '2.7'
 # docopt is used by the fusionsupervision_environment script
 docopt
 
@@ -52,3 +47,5 @@ docopt
 # Use psutil for scheduler FUSIONSUPERVISION_LOG_MONITORING
 # Use psutil for launching daemons from the Arbiter
 psutil>=5.4.3,<=5.4.5
+
+zmq
