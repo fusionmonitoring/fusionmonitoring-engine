@@ -77,7 +77,7 @@ from fusionsupervision.comment import Comment
 from fusionsupervision.objects.module import Module
 
 
-# Make sure people are using Python 2.7 or higher
+# Make sure people are using Python 3.3 or higher
 # This is the canonical python version check
-if sys.version_info < (2, 7):
-    sys.exit("FusionSupervision engine requires as a minimum Python 2.7.x, sorry")
+if sys.version_info < (3, 3):
+    sys.exit("FusionSupervision engine requires as a minimum Python 3.3, sorry")

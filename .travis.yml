@@ -1,10 +1,10 @@
 language: python
 sudo: required
 python:
+  - '3.7'
   - '3.6'
   - '3.5'
   - '3.4'
-  - '2.7'
 
 env:
   - TEST_SUITE=tests
@@ -51,21 +51,6 @@ jobs:
         user: fusionsupervision
         password:
           secure: "xxx"
-    - stage: Debian packaging - python 2
-      python: 2.7
-      if: (tag IS blank)
-      script:
-        - echo "Packaging for BinTray..."
-        - ./package.sh $TRAVIS_BRANCH $TRAVIS_PYTHON_VERSION deb
-      deploy:
-      - provider: bintray
-        skip_cleanup: true
-        file: dist/.bintray-deb.json
-        on:
-          all_branches: true
-        user: fusionsupervision
-        key:
-          secure: "xxx"
     - stage: Debian packaging - python 3
       python: 3.6
       if: (tag IS blank)
@@ -76,24 +61,6 @@ jobs:
       - provider: bintray
         skip_cleanup: true
         file: dist/.bintray-deb.json
-        on:
-          all_branches: true
-        user: fusionsupervision
-        key:
-          secure: "xxx"
-    - stage: RPM packaging - python 2
-      python: 2.7
-      if: (tag IS blank)
-      install:
-        - echo "Installing packaging requirements..."
-        - sudo apt-get install -y rpm
-      script:
-        - echo "Packaging for BinTray..."
-        - ./package.sh $TRAVIS_BRANCH $TRAVIS_PYTHON_VERSION rpm
-      deploy:
-      - provider: bintray
-        skip_cleanup: true
-        file: dist/.bintray-rpm.json
         on:
           all_branches: true
         user: fusionsupervision
@@ -117,21 +84,6 @@ jobs:
         user: fusionsupervision
         key:
           secure: "xxx"
-#    - stage: FreeBSD packaging - python 2
-#      python: 2.7
-#      if: (tag IS blank)
-#      script:
-#        - echo "Packaging for BinTray..."
-#        - ./package.sh $TRAVIS_BRANCH $TRAVIS_PYTHON_VERSION freebsd
-#      deploy:
-#      - provider: bintray
-#        skip_cleanup: true
-#        file: dist/.bintray-freebsd.json
-#        on:
-#          all_branches: true
-#        user: fusionsupervision
-#        key:
-#          secure: "xxx"
 #    - stage: FreeBSD packaging - python 3
 #      python: 3.6
 #      if: (tag IS blank)
