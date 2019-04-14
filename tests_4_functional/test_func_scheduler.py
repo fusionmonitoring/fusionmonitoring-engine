@@ -28,17 +28,19 @@ class SchedulerFunctionalTest(unittest2.TestCase):
 
     def test_active_check_run_and_runagain(self):
         """Test run check at right time and works nicely"""
-        self.run_fake_poller()
         # create a service
         services = self.get_services()
         # init the scheduler
-        sched = Scheduler(services)
+        sched = Scheduler({}, {"services": services})
+
+        self.run_fake_poller()
         # runloop scheduler
         sched.run_loop()
         # return_check_executed (must return 1)
         checks_cnt = self.return_check_executed()
         self.assertEqual(1, checks_cnt)
         # runloop scheduler (manage result)
+        time.sleep(0.2)
         sched.run_loop()
         # return_check_executed (must return 0)
         checks_cnt = self.return_check_executed()
@@ -47,7 +49,10 @@ class SchedulerFunctionalTest(unittest2.TestCase):
         time.sleep(3)
         # runloop scheduler
         sched.run_loop()
+        time.sleep(0.2)
+        sched.run_loop()
         # return_check_executed (must return 1)
+        time.sleep(0.2)
         checks_cnt = self.return_check_executed()
         self.assertEqual(1, checks_cnt)
         # runloop scheduler (manage result)
@@ -65,6 +70,8 @@ class SchedulerFunctionalTest(unittest2.TestCase):
     def return_check_executed(self):
         """Get check on zmq and return the check completed"""
         checks = common.zmq_receive(self.psocket_scheduler)
+        print("checks reveived... ", checks)
+        # print(self.psocket_scheduler)
         # modify check data
         if len(checks) == 1:
             checks[0]['time_poller_received'] = time.time()
@@ -138,10 +145,10 @@ class SchedulerFunctionalTest(unittest2.TestCase):
                 "ls_acknowledged": False,
                 "ls_acknowledgement_type": 1,
                 "ls_downtimed": False,
-                "ls_last_check": 0,
+                "ls_last_check": 0.0,
                 "ls_last_state": "OK",
                 "ls_last_state_type": "HARD",
-                "ls_next_check": 0,
+                "ls_next_check": 0.0,
                 "ls_output": "",
                 "ls_long_output": "",
                 "ls_perf_data": "",
@@ -149,16 +156,14 @@ class SchedulerFunctionalTest(unittest2.TestCase):
                 "ls_latency": 0.0,
                 "ls_execution_time": 0.0,
                 "ls_passive_check": False,
-                "ls_state_changed": 0,
-                "ls_last_state_changed": 0,
-                "ls_last_hard_state_changed": 0,
-                "ls_last_time_up": 0,
-                "ls_last_time_down": 0,
-                "ls_last_time_unknown": 0,
-                "ls_last_time_unreachable": 0,
-                "ls_grafana": False,
-                "ls_grafana_panelid": 0,
-                "ls_last_notification": 0,
+                "ls_state_changed": 0.0,
+                "ls_last_state_changed": 0.0,
+                "ls_last_hard_state_changed": 0.0,
+                "ls_last_time_up": 0.0,
+                "ls_last_time_down": 0.0,
+                "ls_last_time_unknown": 0.0,
+                "ls_last_time_unreachable": 0.0,
+                "ls_last_notification": 0.0,
                 "_etag": "5ec976ccbadf6634c229e7180b9583c54149dfd0",
             }
         }

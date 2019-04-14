@@ -38,17 +38,22 @@ def create_zmq_subscriver(port, topic):
 
 def zmq_send(socket, topic, data):
     """Publish data on specific topic"""
-    socket.send_string("%s|||||%s" % (topic, ujson.dumps(data)))
+    # Not send if data empty
+    if not data:
+        return
+    try:
+        socket.send_string("%s|||||%s" % (topic, ujson.dumps(data)))
+    except zmq.Again:
+        pass
 
 def zmq_receive(socket):
     """Get data publisheds"""
     try:
         string = socket.recv(flags=zmq.NOBLOCK)
-        _, jsonchecks = string.decode().split("|||||")
-        return ujson.loads(jsonchecks)
     except zmq.Again:
-        pass
-    return []
+        return []
+    _, jsonchecks = string.decode().split("|||||")
+    return ujson.loads(jsonchecks)
 
 def manage_signal():
     """Intercept signal like SIGTERM"""
@@ -62,5 +67,8 @@ def convert_list_in_dict(source):
     """Convert list in dict with _id value in key of the dict"""
     data = {}
     for x in source:
-        data[x['_id']] = x
+        if '_id' in x:
+            data[x['_id']] = x
+        elif 'service' in x:
+            data[x['service']] = x
     return data

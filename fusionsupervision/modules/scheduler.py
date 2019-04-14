@@ -38,9 +38,13 @@ class Scheduler():
     """
 
     # static properties
-    services = {}
+    services_prop = {}
 
     # dynamic properties
+    services_state = {}
+
+
+
     services_check = {}
     service_check_period = []
     service_notification_period = []
@@ -57,28 +61,24 @@ class Scheduler():
     timestamp_next_recalculate_periods = 0.0
     zmq_enable = True
 
-    def __init__(self, services, init_zmq=True):
-        # TODO replace services with dict {"services":x, "commands":x, "users":x}
-        self.services = services
-        self.zmq_enable = init_zmq
-        # TODO fix it
-        #service = list(services.values())
+    def __init__(self, config, config_data, init_zmq=True):
+        """Initialize the scheduler
 
-        # manage time (set begin and end period of each host and service)
-        self.service_check_period = list(map(lambda x: {'start': 0.0, 'end': 0.0, 'period': x['check_period'], '_id': x['_id']}, list(services.values())))
-        self.service_notification_period = list(map(lambda x: {'start': 0.0, 'end': 0.0, 'period': x['notification_period'], '_id': x['_id']}, list(services.values())))
+        config: it's the config
+        config_data: it's the data config (services, commands, timeperiods...)
+        """
+        self.zmq_enable = init_zmq
+        # Split services in static and dynamic dict
+        self.services_prop = common.convert_list_in_dict(list(map(lambda x: self.map_services_prop(x), config_data['services'].values())))
+        self.services_state = common.convert_list_in_dict(list(map(lambda x: self.map_services_state(x), config_data['services'].values())))
         # Get mapping service _id => list index
-        self.mapping_list_services = self.mapping_dict_list_indexes(self.service_check_period)
-        # Create timeperiods objects
-        # TODO
-        # create service check_state
-        self.services_check = list(map(lambda x: {'_id': x['_id'], 'check_sent': False, 'date_sent': 0.0, 'next_check_planned': 0.0}, list(services.values())))
+        self.mapping_list_services = self.mapping_dict_list_indexes(self.services_prop.values())
+        # TODO Create timeperiods objects
+
         # get acknowledges
         # TODO acknowledges = ...
         # get downtimes
         # TODO downtimes = ...
-
-        # TODO manage the service _id => list index, like {'523453425':0, '408959890325': 1}
 
         # init zeromq
         if init_zmq:
@@ -87,8 +87,8 @@ class Scheduler():
 
     def start(self):
         """Start running the scheduler"""
-        exit = False
-        while not exit:
+        to_exit = False
+        while not to_exit:
             self.run_loop()
             # TODO manage SIGTERM (in common class), return exit or not
 
@@ -97,7 +97,7 @@ class Scheduler():
         if freshnessed is None:
             freshnessed = []
         now = time.time()
-        # TODO zeromq, get checks from poller
+        # zeromq, get checks from poller
         checks = []
         if self.zmq_enable:
             checks = common.zmq_receive(self.socket_poller)
@@ -107,24 +107,27 @@ class Scheduler():
 
         # recalculate periods if needed
         if self.timestamp_next_recalculate_periods < now:
-            self.service_check_period = self.manage_service_check_period(now, self.service_check_period)
+            self.services_state = self.manage_service_check_period(now, self.services_state, self.services_prop)
             #self.timestamp_next_recalculate_periods = reduce(lambda x, y: x if x < y else y, list(map(lambda x: x['end'], self.manage_service_check_period)))
             self.timestamp_next_recalculate_periods = now
-
         # schedule new checks
-        zeromq_checks_to_send = self.schedule_new_checks(now, self.services, self.service_check_period, self.commands)
-        print("number checks: ", len(zeromq_checks_to_send))
-        # TODO send checks to poller througth zeromq
+        zeromq_checks_to_send, self.services_state = self.schedule_new_checks(now, self.services_prop, self.services_state, self.commands)
+        # send checks to poller througth zeromq
         if self.zmq_enable:
             common.zmq_send(self.socket_scheduler, "checks_to_run", zeromq_checks_to_send)
-
         # TODO consume check results (and recalculate next_check_planned in services_check)
-        self.services = self.consume_check_results(checks, self.services, self.services_check)
+        self.services_state = self.consume_check_results(checks, self.services_state, self.services_prop)
+
+        # calculate next check planned
+        self.services_state = common.convert_list_in_dict(list(map(lambda x: self.calculate_next_check_planned(x, self.services_prop[x['_id']]), self.services_state.values())))
+
+
+        # TO BE CONTINUE...
 
         # TODO check freshness
-        self.services = self.check_freshness(self.services, now, freshnessed)
+        #self.services = self.check_freshness(self.services, now, freshnessed)
         # regenerate freshnessed services
-        freshnessed = list(filter(lambda x: self.generate_freshnessed_services(x, now), self.services.values()))
+        #freshnessed = list(filter(lambda x: self.generate_freshnessed_services(x, now), self.services.values()))
 
         # TODO manage notifications
         self.manage_service_notification_period()
@@ -132,52 +135,54 @@ class Scheduler():
         # TODO clean zombies (check, actions)
 
     @staticmethod
-    def manage_service_check_period(now, service_check_period):
+    def manage_service_check_period(now, services_state, services_prop):
         """Set begin and end period of each host and service for check"""
-        to_calculate = list(filter(lambda x: x['end'] < now, service_check_period))
-        all_timeperiods = list(map(lambda x: x['period'], to_calculate))
+        to_calculate = list(filter(lambda x: x['fs_check_period']['end'] < now, services_state.values()))
+        all_timeperiods = list(map(lambda x: x['check_period'], services_prop.values()))
         timeperiods = list(set(all_timeperiods))
         def replace_times(x, period, value):
             #if x['period'] == period:
             #    x['start'] = value
-            x['end'] = 2054408035.6778336
+            x['fs_check_period']['end'] = 2054408035.6778336
             return x
         for tid in timeperiods:
             #print(tid)
             # TODO get next start and end for this period
-            service_check_period = list(map(lambda x: replace_times(x, '507f1f77bcf86cd799439011', 754368957.0), service_check_period))
-        return service_check_period
+            services_state = list(map(lambda x: replace_times(x, '507f1f77bcf86cd799439011', 754368957.0), services_state.values()))
+        return common.convert_list_in_dict(services_state)
 
     @staticmethod
     def manage_service_notification_period():
         """Set begin and end period of each host and service for notification"""
         print("todo")
 
-    def schedule_new_checks(self, now, service, service_check_period, commands):
+    def schedule_new_checks(self, now, services_prop, services_state, commands):
         """Schedule new checks on hosts and services"""
-        # get list from self.service_check_period who need to be scheduled and not running
-        to_run = list(filter(lambda x: self.filter_to_run(x, now), service_check_period))
+        # get list from self.services_state who need to be scheduled and not running
+        to_run = list(filter(lambda x: self.filter_to_run(x, now), services_state.values()))
         # get elements in the 2 lists (to_run and service)
-        services_to_check = list(map(lambda x: service[x['_id']], to_run))
-        # generate checks 
-        return list(map(lambda x: self.create_check(x, commands), services_to_check))
+        services_to_check = common.convert_list_in_dict(list(map(lambda x: services_prop[x['_id']], to_run)))
+        # update fs_check values
+        services_state = list(map(lambda x: self.set_fs_check(x, services_to_check, now), services_state.values()))
+        # generate checks
+        return list(map(lambda x: self.create_check(x, commands), services_to_check.values())), common.convert_list_in_dict(services_state)
 
-    def consume_check_results(self, checks, services, services_check):
+    def consume_check_results(self, checks, services_state, services_prop):
         """Consume check results (checks = [])"""
-        # TODO update self.services (ls_ simple)
-        # services = list(map(lambda x: self.update_service_ls(x, services[x.service]), checks))
-        # TODO update self.services (manage hard / soft)
-        # services = list(map(lambda x: self.manage_hard_soft(x, services[x.service]), checks))
-        # calculate next check planned
-        services_check = common.convert_list_in_dict(list(map(lambda x: self.calculate_next_check_planned(x, services[x['_id']]), services_check)))
-        # Update ls_next_check in service
-        services = list(map(lambda x: self.update_service_ls_next_check(x, services_check[x['_id']]), services.values()))
-        return common.convert_list_in_dict(services)
+        # TODO NEED UPDATE THE SERVICE, NOT THE CHECK
+        checks = common.convert_list_in_dict(checks)
+        # update self.services (ls_ simple)
+        services_state = list(map(lambda x: self.update_service_ls(x, checks), services_state.values()))
+        # update self.services (manage hard / soft)
+        return common.convert_list_in_dict(list(map(lambda x: self.manage_hard_soft(x, services_prop[x['_id']], checks), services_state)))
 
     @staticmethod
-    def update_service_ls(x, service):
+    def update_service_ls(x, checks):
         """Update the service properties with data of the check"""
-        service['ls_state'] = x.status
+        if not x['_id'] in checks.keys():
+            return x
+        check = checks[x['_id']]
+        x['ls_state'] = check['return_code']
         #    'ls_state_id': {
         #    'ls_acknowledged': {
         #    'ls_acknowledgement_type': {
@@ -187,12 +192,12 @@ class Scheduler():
         #    'ls_last_state_type': {
         #    'ls_last_state_changed': {
         #    'ls_next_check': {
-        service['ls_output'] = x.output
-        service['ls_long_output'] = x.ls_long_output
-        service['ls_perf_data'] = x.perf_data
+        x['ls_output'] = check['output']
+        x['ls_long_output'] = check['output']
+        x['ls_perf_data'] = check['perf_data']
         #    'ls_current_attempt': {
         #    'ls_latency': {
-        service['ls_execution_time'] = x.execution_time
+        x['ls_execution_time'] = check['time_poller_finish'] - check['time_poller_run']
         #    'ls_passive_check': {
         #    'ls_state_changed': {
         #    'ls_last_hard_state_changed': {
@@ -202,28 +207,30 @@ class Scheduler():
         #    'ls_last_time_unknown': {
         #    'ls_last_time_unreachable': {
         #    'ls_last_notification': {
-        return service
+        x['fs_check']['check_sent'] = False
+        return x
 
     @staticmethod
-    def manage_hard_soft(x, service):
+    def manage_hard_soft(x, service_prop, checks):
         """Manage the type HARD / SOFT of the service with check result"""
         # HARD OK -> SOFT CRITICAL -> SOFT CRITICAL -> HARD CRITICAL
         # HARD OK -> SOFT CRITICAL -> HARD OK
         # HARD OK -> SOFT WARNING -> SOFT CRITICAL -> HARD CRITICAL
         # HARD CRITICAL -> HARD OK
-        if x.state_type == 'SOFT':
-            # Manage case of multiple tries
-            service['ls_current_attempt'] += 1
-            if service['ls_current_attempt'] >= service['max_check_attempts']:
-                service['state_type'] = 'HARD'
-                service['ls_current_attempt'] = 0
-                # TODO calculate next run
-            # TODO calculate next run in check attempt mode
-        elif service['ls_state'] == 'OK':
-            if x.state != 'OK':
-                service['state_type'] = 'SOFT'
-                service['ls_current_attempt'] += 1
-        return service
+        # TODO must rewrite, not working
+        # if x.state_type. == 'SOFT':
+        #     # Manage case of multiple tries
+        #     service['ls_current_attempt'] += 1
+        #     if service['ls_current_attempt'] >= service['max_check_attempts']:
+        #         service['ls_state_type'] = 'HARD'
+        #         service['ls_current_attempt'] = 0
+        #         # TODO calculate next run
+        #     # TODO calculate next run in check attempt mode
+        # elif service['ls_state'] == 'OK':
+        #     if x.state != 'OK':
+        #         service['ls_state_type'] = 'SOFT'
+        #         service['ls_current_attempt'] += 1
+        return x
 
     def check_freshness(self, services, now, freshnessed):
         """Check the freshness and do actions when freshness is expired"""
@@ -244,8 +251,7 @@ class Scheduler():
     @staticmethod
     def filter_to_run(x, now):
         """Get services not have check running and need to be run"""
-        if x['start'] < now and x['end'] > now:
-            #  and x['check_sent'] == False and x['next_check_planned'] < now
+        if x['fs_check_period']['start'] < now and x['fs_check_period']['end'] > now and not x['fs_check']['check_sent'] and x['ls_next_check'] <= now:
             return x
         return False
 
@@ -279,20 +285,14 @@ class Scheduler():
         return data
 
     @staticmethod
-    def update_service_ls_next_check(x, check):
-        """Report next_check_planned of service_check to ls_next_check of the service"""
-        x['ls_next_check'] = check['next_check_planned']
-        return x
-
-    @staticmethod
-    def calculate_next_check_planned(x, service):
-        """Calculate the next chack timestamp based on retry or check interval, depend on cases"""
-        if service['ls_current_attempt'] > 0:
+    def calculate_next_check_planned(x, service_prop):
+        """Calculate the next check timestamp based on retry or check interval, depend on cases"""
+        if x['ls_current_attempt'] > 0:
             # in this case (SOFT type, need use retry_interval
-            x['next_check_planned'] = x['date_sent'] + float(service['retry_interval'])
+            x['ls_next_check'] = x['fs_check']['date_sent'] + float(service_prop['retry_interval'])
         else:
             # in this case (HARD type),  use check_interval
-            x['next_check_planned'] = x['date_sent'] + float(service['check_interval'])
+            x['ls_next_check'] = x['fs_check']['date_sent'] + float(service_prop['check_interval'])
         return x
 
     @staticmethod
@@ -308,3 +308,49 @@ class Scheduler():
         if x['ls_last_check'] < (now - float(x['freshness_threshold'])):
             return x['_id']
         return False
+
+    @staticmethod
+    def update_field_with_another(x, field_name, field_value):
+        """Update value of dict with another value"""
+        x[field_name] = field_value
+        return x
+
+    @staticmethod
+    def map_services_prop(service):
+        """Get static / config properties"""
+        new = {}
+        for key, val in service.items():
+            if key[:3] != "ls_":
+                new[key] = val
+        return new
+
+    @staticmethod
+    def map_services_state(service):
+        """Get state properties (dynamic)"""
+        print("TODO")
+        new = {
+            "_id": service["_id"]
+        }
+        for key, val in service.items():
+            if key[:3] == "ls_":
+                new[key] = val
+        new["fs_check_period"] = {
+            "start": 0.0,
+            "end": 0.0
+        }
+        new["fs_notification_period"] = {
+            "start": 0.0,
+            "end": 0.0
+        }
+        new["fs_check"] = {
+            "check_sent": False,
+            "date_sent": 0.0
+        }
+        return new
+
+    @staticmethod
+    def set_fs_check(service_state, services_to_check, now):
+        if service_state["_id"] in services_to_check.keys():
+            service_state["fs_check"]["check_sent"] = True
+            service_state["fs_check"]["date_sent"] = now
+        return service_state

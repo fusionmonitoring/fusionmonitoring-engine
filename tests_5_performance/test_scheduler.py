@@ -155,7 +155,7 @@ class PerfTest(unittest2.TestCase):
                 "check_period": "59a94f8d94dbfe563801fb7a0583",
                 "notification_period": "59a94f8d94dbfe563801fb7a0583",
             }
-        sched = Scheduler(services)
+        sched = Scheduler({}, {"services": services})
 
         # connect zmq
         context = zmq.Context()
